@@ -61,7 +61,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+![Twitter Demo](TwitterDemoGIF.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -93,3 +93,4 @@ I really enjoyed building this app. I learned a lot and am more confident about 
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
