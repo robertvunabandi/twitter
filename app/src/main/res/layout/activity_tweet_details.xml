@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:padding="16dp"
+    tools:context="com.codepath.apps.restclienttemplate.TweetDetailsActivity">
+
+    <RelativeLayout
+        android:id="@+id/rlUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/tvNameD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toEndOf="@+id/ivProfileImageD"
+            android:text="tvNameD"
+            android:textColor="@color/colorWhite"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivProfileImageD"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            app:srcCompat="@drawable/ic_face_placeholder" />
+
+        <TextView
+            android:id="@+id/tvScreenNameD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvNameD"
+            android:layout_marginLeft="8dp"
+            android:layout_toEndOf="@+id/ivProfileImageD"
+            android:text="tvScreenNameD"
+            android:textColor="@color/colorLightGrey"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/vtSeparator1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/rlUser"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorDarkLine" />
+
+    <!-- TWEET BODY -->
+    <!-- TWEET BODY -->
+    <!-- TWEET BODY -->
+    <RelativeLayout
+        android:id="@+id/rlBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/vtSeparator1">
+
+        <TextView
+            android:id="@+id/tvBodyD"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="tvBodyD"
+            android:autoLink="all"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvCreatedAtD"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvBodyD"
+            android:text="tvCreatedAtD"
+            android:textColor="@color/colorLightGrey"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/vtSeparator2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/rlBody"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorDarkLine" />
+
+    <!-- TWEET INFO -->
+    <!-- TWEET INFO -->
+    <!-- TWEET INFO -->
+    <RelativeLayout
+        android:id="@+id/rlTweetsInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/vtSeparator2">
+
+        <TextView
+            android:id="@+id/tvRetweetsD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:text="0"
+            android:textColor="@color/colorWhite"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/tvRetweetsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="16dp"
+            android:layout_toEndOf="@+id/tvRetweetsD"
+            android:text="Retweets"
+            android:textColor="@color/colorLightGrey"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/tvLikesD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/tvRetweetsText"
+            android:text="0"
+            android:textColor="@color/colorWhite"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/tvLikesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Likes"
+            android:textColor="@color/colorLightGrey"
+            android:textSize="24sp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/tvLikesD" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/vtSeparator3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/rlTweetsInfo"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorDarkLine" />
+
+    <!-- BUTTONS -->
+    <!-- BUTTONS -->
+    <!-- BUTTONS -->
+    <LinearLayout
+        android:id="@+id/rlButtons"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/vtSeparator3"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ibReplyD"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="false"
+            android:background="#00000000"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_reply" />
+
+        <ImageView
+            android:id="@+id/ivRetweetD"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="false"
+            android:background="#00000000"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_retweet" />
+
+
+        <ImageView
+            android:id="@+id/ivLoveTweetD"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="false"
+            android:background="#00000000"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_heart_clear_light_blue" />
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vtSeparator4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/rlButtons"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorDarkLine" />
+
+</RelativeLayout>

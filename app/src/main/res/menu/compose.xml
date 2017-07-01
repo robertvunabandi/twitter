@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".BookSearchActivity"
+    >
+    <item
+        android:id="@+id/aCompose"
+        android:icon="@drawable/ic_tweet_quil_accent"
+        android:orderInCategory="5"
+        android:title="aCompose"
+        app:showAsAction="always" />
+</menu>
+
