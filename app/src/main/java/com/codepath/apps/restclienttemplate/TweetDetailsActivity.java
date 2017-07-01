@@ -109,7 +109,6 @@ public class TweetDetailsActivity extends AppCompatActivity {
         ivRetweetD.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "Retweet not implemented", Toast.LENGTH_SHORT).show();
                 if (!tRetweeted) {
                     client.retweetTweet(tUid, new JsonHttpResponseHandler() {
                         @Override
