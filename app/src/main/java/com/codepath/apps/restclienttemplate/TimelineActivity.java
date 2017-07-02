@@ -36,7 +36,7 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     private SwipeRefreshLayout swipeContainer; // for swiping to refresh tweets
     private ProgressBar pb;
-    int totalTweets = 40;
+    int totalTweets = 30;
     Calendar CAL = Calendar.getInstance();
     SimpleDateFormat HMS = new SimpleDateFormat("HH:mm:ss");
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);;
@@ -49,16 +49,16 @@ public class TimelineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline);
         client = TwitterApp.getRestClient();
 
-        // find the RecyclerView
+        // attach the RecyclerView, the ProgressBar, and the FloatingActionBar
         rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
-        // find the progressBar
         pb = (ProgressBar) findViewById(R.id.pbLoading);
-        // find the floating action bar
         fabCompose = (FloatingActionButton) findViewById(R.id.fabCompose);
 
+        // Set up for adapter then populate it with tweets with the length of totalTweets
         reinitializeTweetsAndAdapter();
         populateTimeline(totalTweets);
 
+        /* * * * SWIPE START */
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainerRefresher);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -75,15 +75,17 @@ public class TimelineActivity extends AppCompatActivity {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0) {
                     int lastPosition = layoutManager.findLastVisibleItemPosition();
-                    if (lastPosition > tweets.size() - 5) {
+                    if (lastPosition > tweets.size() - 2) {
                         addToTimeline();
                     }
-                    //findFirstVisibleItemPosition();
                 }
             }
         });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(R.color.colorPrimaryDarkLight, R.color.colorLightGrey, R.color.colorAccent, R.color.colorPrimaryLight);
+        /* SWIPE END * * * */
+
+        /* FLOATING ACTION BAR ON CLICK LISTENER */
         fabCompose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,8 +93,7 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        // setup the listener on creation
-        setupListViewListener();
+        /* edit the title to home */
         getSupportActionBar().setTitle("Home");
     }
 
@@ -108,25 +109,6 @@ public class TimelineActivity extends AppCompatActivity {
         Log.d(TAG, String.format("Tweets reinitialized at %s", HMS.format(CAL.getTime())));
     }
 
-    /*
-    @Override
-    // function gets called by android!
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.compose, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.aCompose:
-                composeMessage(null);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
     private final int REQUEST_CODE = 200;
     public void composeMessage(String text) {
         Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
@@ -151,7 +133,9 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void populateTimeline(int count) {
-
+        // here, the progress bar is not set to visible because this function is always
+        // called after reinitializeTweetsAndAdapter(), which makes the progress bar visible
+        // so we get straight into it with the client.getHomeTimeline
         client.getHomeTimeline(count, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -160,24 +144,13 @@ public class TimelineActivity extends AppCompatActivity {
             }
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                // FOR JSON ARRAYS
-                // Log.d(client.TAG, response.toString());
                 // iterate through the JSON array, for each entry deserialize the JSON Object
                 Log.d(TAG, String.format("PopulateTimeline | RESPONSE LENGTH %s SUCCESS at %s", response.length(),  HMS.format(CAL.getTime())));
 
                 for (int i = 0; i < response.length(); i++){
-
-                    // convert each object into a tweet model
+                    // convert each object into a tweet model inserted in the following tweet object
                     Tweet tweet;
                     try {
-                        // JSONArray media = response.getJSONObject(i).getJSONObject("entities").getJSONArray("media");
-                        try {
-                            Log.w(TAG, String.format("MEDIA FOUND ! ! !"));
-                            Log.w(TAG, String.format("%s", response.getJSONObject(i).getJSONObject("entities").getJSONArray("media")));
-                        } catch (JSONException e){
-                            Log.w(TAG, String.format("MEDIA NOT FOUND"));
-                        }
-
                         tweet = Tweet.fromJSON(response.getJSONObject(i));
                         // add the tweet model to our data source
                         tweets.add(tweet);
@@ -220,7 +193,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void addToTimeline() {
-        pb.setVisibility(ProgressBar.VISIBLE);
+        pb.setVisibility(ProgressBar.VISIBLE); // show the progress bar
         Log.d(TAG, String.format("addToTimeline at %s", HMS.format(CAL.getTime())));
         client.addToTimeline(tweetAdapter.max_id, new JsonHttpResponseHandler() {
             @Override
@@ -244,12 +217,10 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.d(TAG, String.format("PopulateTimeline SUCCESS at %s", HMS.format(CAL.getTime())));
                 pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
             }
-
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d(client.TAG, response.toString());
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(client.TAG, errorResponse.toString());
@@ -258,7 +229,6 @@ public class TimelineActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 15 minutes."), Toast.LENGTH_LONG).show();
                 pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 Log.e(client.TAG, errorResponse.toString());
@@ -267,7 +237,6 @@ public class TimelineActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 15 minutes."), Toast.LENGTH_LONG).show();
                 pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(client.TAG, responseString);
@@ -278,15 +247,25 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    private void setupListViewListener() {
-        /*rvTweets.setOnClickListener(new AdapterView.OnItemClickListener(){
-            Intent i = new Intent(TimelineActivity.this, SingleTweetActivity.class);
-            startActivity(i);
-        });*/
-        // new AdapterView.OnItemClickListener(){}
+    /*
+    @Override
+    // function gets called by android!
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.compose, menu);
+        return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.aCompose:
+                composeMessage(null);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
 
     /*
     REALLY GOOD HELP I GOT FROM STACK OVERFLOW

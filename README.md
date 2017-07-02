@@ -4,7 +4,10 @@
 This app was made for learning purposes.
 
 
-Time spent: **19** hours spent in total
+Time spent: **30** hours spent in total
+
+Elements used:
+- Icons from Material.io/icons/
 
 ## User Stories
 
@@ -57,6 +60,8 @@ The following **additional** features are implemented:
   * [ ] Remove Toast Statements on onClick events from TweetAdapter
   * [x] On reply, set handler to tweet id (in reply to, check twitter API) so that replies work in actual replies
   * [ ] Fix bugs resulting from infinite scroll and repeating the same tweets over and ove 
+  * [ ] Add a backpress button when user enters reply to a tweet (instead of letting be for the regular android backPress)
+  * [ ] When click on backPress in the timeline, it just restart the application instead of quitting it. Fixing this bug would be a goal.
 
 ## Video Walkthrough
 

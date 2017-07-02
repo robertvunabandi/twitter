@@ -18,11 +18,11 @@ import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetDetailsActivity extends AppCompatActivity {
-    public ImageView ivProfileImageD, ibReplyD, ivRetweetD, ivLikeD;
-    public TextView tvNameD, tvScreenNameD, tvBodyD, tvCreatedAtD;
-    public TextView tvRetweetsD, tvLikesD;
+    public View mediaSeparatorD;
+    public ImageView ivProfileImageD, ibReplyD, ivRetweetD, ivLikeD, ivTweetedImageD;
+    public TextView tvNameD, tvScreenNameD, tvBodyD, tvCreatedAtD, tvRetweetsD, tvLikesD;
     public long tUid;
-    public boolean tRetweeted, tLiked;
+    public boolean tRetweeted, tLiked, tMediaFound;
     private static TwitterClient client;
 
     public String tName, tScreenName, tBody, tCreatedAt, tProfileImageUrl;
@@ -32,18 +32,10 @@ public class TweetDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_details);
-
         getSupportActionBar().setTitle("Tweet");
 
-        // enables the back press
-        // ActionBar actionBar = getActionBar();
-        // actionBar.setDisplayHomeAsUpEnabled(true);
-
-        // declare the variables to be used
-
-
-
-        client = TwitterApp.getRestClient(); // get the twitter client
+        // get the twitter client
+        client = TwitterApp.getRestClient();
 
         // set those variables to values received from the intent
         tName = getIntent().getStringExtra("tName");
@@ -56,6 +48,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
         tUid = getIntent().getLongExtra("tUid", -1);
         tLiked = getIntent().getBooleanExtra("tLiked", false);
         tRetweeted = getIntent().getBooleanExtra("tRetweeted", false);
+        tMediaFound = getIntent().getBooleanExtra("tMediaFound", false);
 
         // create the correct variables
         ivProfileImageD = (ImageView) findViewById(R.id.ivProfileImageD);
@@ -69,6 +62,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
         tvLikesD = (TextView) findViewById(R.id.tvLikesD);
         ivRetweetD = (ImageView) findViewById(R.id.ivRetweetD);
         ivLikeD = (ImageView) findViewById(R.id.ivLoveTweetD);
+        ivTweetedImageD = (ImageView) findViewById(R.id.ivTweetedImageD);
+        mediaSeparatorD = findViewById(R.id.mediaSeparatorD);
 
         // set the texts
         tvNameD.setText(tName);
@@ -83,12 +78,24 @@ public class TweetDetailsActivity extends AppCompatActivity {
         else ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_svg));
         if (tLiked) ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_solid_red_svg));
         else ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_clear_light_blue_svg));
+        if (tMediaFound) {
+            mediaSeparatorD.setVisibility(View.VISIBLE);
+            ivTweetedImageD.setVisibility(View.VISIBLE);
+            Glide.with(getBaseContext()).load(getIntent().getStringExtra("tMediaUrlHTTPS"))
+                    .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 20, 0))
+                    .placeholder(R.drawable.ic_person_v3_svg)
+                    .error(R.drawable.ic_person_v3_svg)
+                    .into(ivTweetedImageD);
+        } else {
+            mediaSeparatorD.setVisibility(View.GONE);
+            ivTweetedImageD.setVisibility(View.GONE);
+        }
 
         // set the image profile
         Glide.with(this).load(tProfileImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(this, 2000, 0))
-                .placeholder(R.drawable.ic_person_v1_svg)
-                .error(R.drawable.ic_person_v1_svg)
+                .placeholder(R.drawable.ic_person_v3_svg)
+                .error(R.drawable.ic_person_v3_svg)
                 .into(ivProfileImageD);
                 // .override(2048, 2048)
 

@@ -72,9 +72,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         if (tweet.mediaFound) {
             holder.ivTweetedImage.setVisibility(View.VISIBLE);
             Glide.with(context).load(tweet.media.urlHTTPS)
-                    .bitmapTransform(new RoundedCornersTransformation(context, 10, 0))
-                    .placeholder(R.drawable.ic_person_v2_svg)
-                    .error(R.drawable.ic_person_v2_svg)
+                    .bitmapTransform(new RoundedCornersTransformation(context, 20, 0))
+                    .placeholder(R.drawable.ic_person_v3_svg)
+                    .error(R.drawable.ic_person_v3_svg)
                     .into(holder.ivTweetedImage);
         } else {
             holder.ivTweetedImage.setVisibility(View.GONE);
@@ -235,7 +235,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 context.startActivity(i);
 
             // } else */
-            if (v.getId() == tvUserName.getId() || v.getId() == tvBody.getId() || v.getId() == tvScreenName.getId()) {
+            if (v.getId() == tvUserName.getId() || v.getId() == tvBody.getId() || v.getId() == tvScreenName.getId() || v.getId() == ivTweetedImage.getId()) {
                 // Send the user to a tweet details class
                 Intent i = new Intent(context, TweetDetailsActivity.class);
                 // create the variables to be sent
@@ -262,6 +262,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 i.putExtra("tRetweeted", mTweets.get(getAdapterPosition()).tweetRetweeted);
                 i.putExtra("tLiked", mTweets.get(getAdapterPosition()).tweetLiked);
                 i.putExtra("tPosition", getAdapterPosition());
+                // media image in case it's there, otherwise get nulls
+                if (mTweets.get(getAdapterPosition()).mediaFound){
+                    i.putExtra("tMediaFound", mTweets.get(getAdapterPosition()).mediaFound);
+                    i.putExtra("tMediaUrl", mTweets.get(getAdapterPosition()).media.url);
+                    i.putExtra("tMediaUrlHTTPS", mTweets.get(getAdapterPosition()).media.urlHTTPS);
+                } else {
+                    i.putExtra("tMediaFound", (Boolean) false);
+                    i.putExtra("tMediaUrl", (String) null);
+                    i.putExtra("tMediaUrlHTTPS", (String) null);
+                }
 
                 // start the activity
                 context.startActivity(i);
