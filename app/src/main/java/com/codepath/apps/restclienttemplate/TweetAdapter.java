@@ -15,9 +15,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetText;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
@@ -50,9 +52,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     // bind the values based on position of the element
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // get data according to position
-        Tweet tweet = mTweets.get(position);
+        final Tweet tweet = mTweets.get(position);
         // populate the views according to this data
         holder.tvUserName.setText(tweet.user.name);
         // to change the colors and stuffs
@@ -62,17 +64,116 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvCreatedAt.setText(tweet.createdAt);
         holder.tvScreenName.setText("@"+tweet.user.screenName);
         holder.tvRetweets.setText(String.valueOf(tweet.retweetCount)); // set the retweets count
-        if (tweet.tweetRetweeted) holder.ivRetweet.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_green));
+        if (!tweet.tweetRetweeted) holder.ivRetweet.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_svg));
+        else holder.ivRetweet.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_green_svg));
+        if (!tweet.tweetLiked) holder.ivLike.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_heart_clear_light_blue_svg));
+        else holder.ivLike.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_heart_solid_red_svg));
         holder.tvLikes.setText(String.valueOf(tweet.likeCount)); // set the likes count
+        if (tweet.mediaFound) {
+            holder.ivTweetedImage.setVisibility(View.VISIBLE);
+            Glide.with(context).load(tweet.media.urlHTTPS)
+                    .bitmapTransform(new RoundedCornersTransformation(context, 10, 0))
+                    .placeholder(R.drawable.ic_person_v2_svg)
+                    .error(R.drawable.ic_person_v2_svg)
+                    .into(holder.ivTweetedImage);
+        } else {
+            holder.ivTweetedImage.setVisibility(View.GONE);
+        }
         Glide.with(context).load(tweet.user.profileImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 2000, 0))
-                .placeholder(R.drawable.ic_face_placeholder)
-                .error(R.drawable.ic_face_placeholder)
+                .placeholder(R.drawable.ic_person_v1_svg)
+                .error(R.drawable.ic_person_v1_svg)
                 .override(2048, 2048)
                 .into(holder.ivProfileImage);
 
         // update the max id of this adapter
         max_id = tweet.uid < max_id ? tweet.uid : max_id;
+
+        holder.ibReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toast.makeText(v.getContext(), "ITEM PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+                // if we get the reply click, then we want to create another intent from the context of the item clicked (v.context)
+                Intent i = new Intent(context, ComposeActivity.class);
+                i.putExtra("text", tweet.user.screenName);
+                i.putExtra("reply_uid", tweet.uid);
+                context.startActivity(i);
+            }
+        });
+
+        holder.ivRetweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!tweet.tweetRetweeted){
+                    client.retweetTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tweet.retweetCount += 1;
+                            holder.tvRetweets.setText(Long.toString(tweet.retweetCount));
+                            tweet.tweetRetweeted = true;
+                            holder.ivRetweet.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_green_svg));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(context, "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    client.unretweetTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tweet.retweetCount -= 1;
+                            holder.tvRetweets.setText(Long.toString(tweet.retweetCount));
+                            tweet.tweetRetweeted = false;
+                            holder.ivRetweet.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_svg));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(context, "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
+        holder.ivLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!tweet.tweetLiked){
+                    client.likeTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tweet.likeCount += 1;
+                            holder.tvLikes.setText(Long.toString(tweet.likeCount));
+                            tweet.tweetLiked = true;
+                            holder.ivLike.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_heart_solid_red_svg));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(context, "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    client.unlikeTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tweet.likeCount -= 1;
+                            holder.tvLikes.setText(Long.toString(tweet.likeCount));
+                            tweet.tweetLiked = false;
+                            holder.ivLike.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_heart_clear_light_blue_svg));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(context, "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     // item count
@@ -82,11 +183,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
     // create ViewHolder class
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView ivProfileImage;
         public TextView tvUserName, tvBody, tvCreatedAt, tvScreenName;
         public TextView tvRetweets, tvLikes;
         public ImageView ibReply, ivRetweet, ivLike;
+        public ImageView ivTweetedImage;
 
         public ViewHolder (View itemView) {
             super(itemView);
@@ -104,14 +206,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             ivRetweet = (ImageView) itemView.findViewById(R.id.ivRetweet);
             ivLike = (ImageView) itemView.findViewById(R.id.ivLoveTweet);
 
+            ivTweetedImage = (ImageView) itemView.findViewById(R.id.ivTweetedImage);
+
             tvScreenName.setOnClickListener(this);
             ivProfileImage.setOnClickListener(this);
             tvUserName.setOnClickListener(this);
             tvBody.setOnClickListener(this);
             tvCreatedAt.setOnClickListener(this);
             ibReply.setOnClickListener(this); // listener for reply specifically
-            // tvRetweets.setOnClickListener(this);
-            // tvLikes.setOnClickListener(this);
             ivRetweet.setOnClickListener(this);
             ivLike.setOnClickListener(this);
         }
@@ -119,9 +221,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
         @Override
         public void onClick(View v) {
-            Context context = v.getContext();
+            final Context context = v.getContext();
             int position = getAdapterPosition();
-            if (v.getId() == ibReply.getId()) {
+            /* if (v.getId() == ibReply.getId()) {
                 // Toast.makeText(v.getContext(), "ITEM PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
                 // if we get the reply click, then we want to create another intent from the context of the item clicked (v.context)
                 long reply_uid;
@@ -132,7 +234,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 i.putExtra("reply_uid", reply_uid);
                 context.startActivity(i);
 
-            } else if (v.getId() == tvUserName.getId() || v.getId() == tvBody.getId() || v.getId() == tvScreenName.getId()) {
+            // } else */
+            if (v.getId() == tvUserName.getId() || v.getId() == tvBody.getId() || v.getId() == tvScreenName.getId()) {
                 // Send the user to a tweet details class
                 Intent i = new Intent(context, TweetDetailsActivity.class);
                 // create the variables to be sent
@@ -147,15 +250,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 tLikes = String.valueOf(mTweets.get(getAdapterPosition()).likeCount);
                 tRetweets = String.valueOf(mTweets.get(getAdapterPosition()).retweetCount);
 
-
                 // put each of those variables into the intent
                 i.putExtra("tName", tName);
                 i.putExtra("tScreenName", tScreenName);
                 i.putExtra("tBody", tBody);
                 i.putExtra("tCreatedAt", tCreatedAt);
                 i.putExtra("tProfileImageUrl", tProfileImageUrl);
-                i.putExtra("tLikes", tLikes);
-                i.putExtra("tRetweets", tRetweets);
+                i.putExtra("tLikes", Long.valueOf(tLikes));
+                i.putExtra("tRetweets", Long.valueOf(tRetweets));
                 i.putExtra("tUid", mTweets.get(getAdapterPosition()).uid);
                 i.putExtra("tRetweeted", mTweets.get(getAdapterPosition()).tweetRetweeted);
                 i.putExtra("tLiked", mTweets.get(getAdapterPosition()).tweetLiked);
@@ -163,56 +265,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                 // start the activity
                 context.startActivity(i);
-            } else if (v.getId() == ivLike.getId()) {
-                Toast.makeText(v.getContext(), "LIKE NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
-                long like_uid = mTweets.get(getAdapterPosition()).uid;
-                boolean liked = mTweets.get(getAdapterPosition()).tweetLiked;
-                if (!liked) {}
-                else {}
-
-            } else if (v.getId() == ivRetweet.getId()) {
-                Toast.makeText(v.getContext(), "RETWEET NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
-                long retweet_uid = mTweets.get(getAdapterPosition()).uid;
-                boolean retweeted = mTweets.get(getAdapterPosition()).tweetRetweeted;
-
-                /* if (!retweeted) {
-                    client.retweetTweet(retweet_uid, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Tweet tweet;
-                            try {
-                                tweet = Tweet.fromJSON(response);
-                                // replace the tweet at the position with this new tweet
-                                mTweets.remove(getAdapterPosition());
-                                mTweets.add(getAdapterPosition(), tweet);
-                                notifyAll();
-                                // IMPLEMENT;
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-                else {
-                    client.unretweetTweet(retweet_uid, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Tweet tweet;
-                            try {
-                                tweet = Tweet.fromJSON(response);
-                                // replace the tweet at the position with this new tweet
-                                mTweets.remove(getAdapterPosition());
-                                mTweets.add(getAdapterPosition(), tweet);
-                                notifyAll();
-                                Toast.makeText(v.getContext(), "UNRETWEET", Toast.LENGTH_LONG).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } */
-            }
-            else {
+            } else {
                 Toast.makeText(v.getContext(), "ITEM CLICKED NOT IMPLEMENTED AT POSITION " + String.valueOf(getAdapterPosition()), Toast.LENGTH_LONG).show();
             }
         }

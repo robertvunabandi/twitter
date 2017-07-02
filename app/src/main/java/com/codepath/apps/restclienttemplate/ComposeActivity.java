@@ -47,6 +47,7 @@ public class ComposeActivity extends AppCompatActivity {
         bTweet = (Button) findViewById(R.id.bTweet);
         pb = (ProgressBar) findViewById(R.id.pbLoading);
 
+
         // get the text sent from the intent, this text could be a user to reply to
         text = getIntent().getStringExtra("text");
         getSupportActionBar().setTitle("New Tweet");

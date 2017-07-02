@@ -5,7 +5,7 @@
     >
     <item
         android:id="@+id/aCompose"
-        android:icon="@drawable/ic_tweet_quil_accent"
+        android:icon="@drawable/ic_tweet_quil_accent_svg"
         android:orderInCategory="5"
         android:title="aCompose"
         app:showAsAction="always" />

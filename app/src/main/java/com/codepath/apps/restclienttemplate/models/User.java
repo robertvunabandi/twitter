@@ -14,8 +14,7 @@ public class User {
     public String name, screenName, profileImageUrl;
     public long uid;
 
-    public User() {
-    }
+    public User() {}
 
     // deserialize the JSON
     public static User fromJSON(JSONObject jsonObject) throws JSONException {

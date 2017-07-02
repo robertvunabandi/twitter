@@ -2,13 +2,13 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -31,6 +31,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private TwitterClient client;
     TweetAdapter tweetAdapter;
+    public FloatingActionButton fabCompose;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
     private SwipeRefreshLayout swipeContainer; // for swiping to refresh tweets
@@ -52,6 +53,8 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
         // find the progressBar
         pb = (ProgressBar) findViewById(R.id.pbLoading);
+        // find the floating action bar
+        fabCompose = (FloatingActionButton) findViewById(R.id.fabCompose);
 
         reinitializeTweetsAndAdapter();
         populateTimeline(totalTweets);
@@ -81,6 +84,12 @@ public class TimelineActivity extends AppCompatActivity {
         });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(R.color.colorPrimaryDarkLight, R.color.colorLightGrey, R.color.colorAccent, R.color.colorPrimaryLight);
+        fabCompose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                composeMessage(null);
+            }
+        });
 
         // setup the listener on creation
         setupListViewListener();
@@ -99,7 +108,9 @@ public class TimelineActivity extends AppCompatActivity {
         Log.d(TAG, String.format("Tweets reinitialized at %s", HMS.format(CAL.getTime())));
     }
 
+    /*
     @Override
+    // function gets called by android!
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.compose, menu);
@@ -115,7 +126,7 @@ public class TimelineActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
     private final int REQUEST_CODE = 200;
     public void composeMessage(String text) {
         Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
@@ -140,7 +151,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void populateTimeline(int count) {
-        Log.d(TAG, String.format("PopulateTimeline at %s", HMS.format(CAL.getTime())));
+
         client.getHomeTimeline(count, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -153,11 +164,20 @@ public class TimelineActivity extends AppCompatActivity {
                 // Log.d(client.TAG, response.toString());
                 // iterate through the JSON array, for each entry deserialize the JSON Object
                 Log.d(TAG, String.format("PopulateTimeline | RESPONSE LENGTH %s SUCCESS at %s", response.length(),  HMS.format(CAL.getTime())));
+
                 for (int i = 0; i < response.length(); i++){
 
                     // convert each object into a tweet model
                     Tweet tweet;
                     try {
+                        // JSONArray media = response.getJSONObject(i).getJSONObject("entities").getJSONArray("media");
+                        try {
+                            Log.w(TAG, String.format("MEDIA FOUND ! ! !"));
+                            Log.w(TAG, String.format("%s", response.getJSONObject(i).getJSONObject("entities").getJSONArray("media")));
+                        } catch (JSONException e){
+                            Log.w(TAG, String.format("MEDIA NOT FOUND"));
+                        }
+
                         tweet = Tweet.fromJSON(response.getJSONObject(i));
                         // add the tweet model to our data source
                         tweets.add(tweet);

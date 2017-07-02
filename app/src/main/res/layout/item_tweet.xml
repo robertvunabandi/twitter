@@ -22,59 +22,72 @@
             android:layout_alignParentTop="true"
             android:adjustViewBounds="false"
             android:clickable="true"
-            app:srcCompat="@drawable/ic_face_placeholder" />
+            app:srcCompat="@drawable/ic_person_v1_svg" />
 
         <TextView
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/ivProfileImage"
             android:clickable="true"
             android:fontFamily="sans-serif"
             android:text="tvUserName"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorWhite"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/ivProfileImage" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvScreenName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tvUserName"
+            android:layout_below="@+id/tvUserName"
             android:text="\@"
             android:textColor="@color/colorLightGrey"
-            android:textSize="14sp"
-            android:layout_below="@+id/tvUserName"
-            android:layout_alignStart="@+id/tvUserName" />
-
-        <TextView
-            android:id="@+id/tvBodyD"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:clickable="true"
-            android:text="tvBody"
-            android:autoLink="all"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp"
-            android:textStyle="italic"
-            android:layout_below="@+id/tvCreatedAtD"
-            android:layout_toEndOf="@+id/ivProfileImage" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tvCreatedAtD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tvScreenName"
             android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/ivProfileImage"
             android:text="tvCreatedAt"
             android:textAllCaps="true"
             android:textColor="@color/colorLightGrey"
             android:textSize="10sp"
-            android:textStyle="italic"
-            android:layout_below="@+id/tvScreenName"
-            android:layout_toEndOf="@+id/ivProfileImage" />
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/tvBodyD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvCreatedAtD"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/ivProfileImage"
+            android:autoLink="all"
+            android:clickable="true"
+            android:text="tvBody"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+
+        <ImageView
+            android:id="@+id/ivTweetedImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvBodyD"
+            android:layout_toEndOf="@+id/ivProfileImage"
+            android:adjustViewBounds="true"
+            android:paddingBottom="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_person_v3_svg" />
 
     </RelativeLayout>
 
@@ -103,7 +116,7 @@
                 android:adjustViewBounds="false"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/ic_reply" />
+                app:srcCompat="@drawable/ic_reply_svg" />
         </LinearLayout>
 
         <LinearLayout
@@ -121,7 +134,7 @@
                 android:adjustViewBounds="false"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/ic_retweet" />
+                app:srcCompat="@drawable/ic_retweet_svg" />
 
             <TextView
                 android:id="@+id/tvRetweets"
@@ -147,7 +160,7 @@
                 android:adjustViewBounds="false"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/ic_heart_clear_light_blue" />
+                app:srcCompat="@drawable/ic_heart_clear_light_blue_svg" />
 
             <TextView
                 android:id="@+id/tvLikes"

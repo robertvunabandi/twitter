@@ -51,6 +51,7 @@ public class TwitterClient extends OAuthBaseClient {
         // Can specify query string params directly or through RequestParams.
         RequestParams params = new RequestParams();
         params.put("count", count); // fallback is 40
+        params.put("include_entities", true);
         // params.put("since_id", 1);
         // params.put("max_id", 1);
         client.get(apiUrl, params, handler);
@@ -61,6 +62,7 @@ public class TwitterClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("count", 30);
         params.put("max_id", maxid-1);
+        params.put("include_entities", true);
         client.get(apiUrl, params, handler);
     }
 
@@ -76,9 +78,9 @@ public class TwitterClient extends OAuthBaseClient {
     public void retweetTweet(long uid, AsyncHttpResponseHandler handler) {
         // String apiUrl = getApiUrl("statuses/retweet/:id.json"); // TODO - does this work?
         String apiUrl = getApiUrl("statuses/retweet/"+Long.toString(uid)+".json");
-        RequestParams params = new RequestParams();
-        params.put("id", uid);
-        client.post(apiUrl, params, handler);
+        // RequestParams params = new RequestParams();
+        // params.put("id", uid);
+        client.post(apiUrl, null, handler);
     }
 
     public void unretweetTweet(long uid, AsyncHttpResponseHandler handler) {
@@ -86,9 +88,9 @@ public class TwitterClient extends OAuthBaseClient {
         // String apiUrl = getApiUrl("statuses/unretweet/:id.json"); // TODO - does this work?
         String apiUrl = getApiUrl("statuses/unretweet/"+Long.toString(uid)+".json"); // TODO - does this work?
         //"statuses/unretweet/"+Long.toString(uid)+".json"
-        RequestParams params = new RequestParams();
-        params.put("id", uid);
-        client.post(apiUrl, params, handler);
+        // RequestParams params = new RequestParams();
+        // params.put("id", uid);
+        client.post(apiUrl, null, handler);
     }
 
 

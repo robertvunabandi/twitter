@@ -5,20 +5,14 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetText;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -32,7 +26,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
     private static TwitterClient client;
 
     public String tName, tScreenName, tBody, tCreatedAt, tProfileImageUrl;
-    public String tRetweets, tLikes;
+    public long tRetweets, tLikes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +51,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
         tBody = getIntent().getStringExtra("tBody");
         tCreatedAt = getIntent().getStringExtra("tCreatedAt");
         tProfileImageUrl = getIntent().getStringExtra("tProfileImageUrl");
-        tRetweets = getIntent().getStringExtra("tRetweets");
-        tLikes = getIntent().getStringExtra("tLikes");
+        tRetweets = getIntent().getLongExtra("tRetweets", 0);
+        tLikes = getIntent().getLongExtra("tLikes", 0);
         tUid = getIntent().getLongExtra("tUid", -1);
         tLiked = getIntent().getBooleanExtra("tLiked", false);
         tRetweeted = getIntent().getBooleanExtra("tRetweeted", false);
@@ -82,16 +76,19 @@ public class TweetDetailsActivity extends AppCompatActivity {
         TweetText finalTweet = new TweetText(tBody);
         tvBodyD.setText(Html.fromHtml(finalTweet.finalText));
         tvCreatedAtD.setText(tCreatedAt);
-        tvRetweetsD.setText(tRetweets);
-        tvLikesD.setText(tLikes);
+        tvRetweetsD.setText(Long.toString(tRetweets));
+        tvLikesD.setText(Long.toString(tLikes));
 
-        if (tRetweeted) ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_green));
+        if (tRetweeted) ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_green_svg));
+        else ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_svg));
+        if (tLiked) ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_solid_red_svg));
+        else ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_clear_light_blue_svg));
 
         // set the image profile
         Glide.with(this).load(tProfileImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(this, 2000, 0))
-                .placeholder(R.drawable.ic_face_placeholder)
-                .error(R.drawable.ic_face_placeholder)
+                .placeholder(R.drawable.ic_person_v1_svg)
+                .error(R.drawable.ic_person_v1_svg)
                 .into(ivProfileImageD);
                 // .override(2048, 2048)
 
@@ -106,118 +103,74 @@ public class TweetDetailsActivity extends AppCompatActivity {
         });
 
         // Retweet listener event
-        ivRetweetD.setOnClickListener(new View.OnClickListener(){
+        ivRetweetD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!tRetweeted) {
-                    client.retweetTweet(tUid, new JsonHttpResponseHandler() {
+                if (!tRetweeted){
+                    client.retweetTweet(tUid, new AsyncHttpResponseHandler() {
                         @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Tweet tweet;
-                            try {
-                                tweet = Tweet.fromJSON(response);
-                                tRetweeted = tweet.tweetRetweeted;
-                                ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_green));
-
-                                tRetweets = Integer.toString(tweet.retweetCount);
-                                tvRetweetsD.setText(tRetweets);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tvRetweetsD.setText(Long.toString(tRetweets + 1));
+                            tRetweeted = true;
+                            ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_green_svg));
                         }
 
                         @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                            super.onSuccess(statusCode, headers, response);
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(getBaseContext(), "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    client.unretweetTweet(tUid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tvRetweetsD.setText(Long.toString(tRetweets));
+                            tRetweeted = false;
+                            ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_svg));
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s", errorResponse.toString()));
-                            throwable.printStackTrace();
-
-                            Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                            Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s", errorResponse.toString()));
-                            throwable.printStackTrace();
-
-                            Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s", responseString));
-                            throwable.printStackTrace();
-
-                            Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(getBaseContext(), "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-                else {
-                    client.unretweetTweet(tUid, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Tweet tweet;
-                            try {
-                                tweet = Tweet.fromJSON(response);
-                                tRetweeted = tweet.tweetRetweeted;
-                                ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet));
-
-                                tRetweets = Integer.toString(tweet.retweetCount);
-                                tvRetweetsD.setText(tRetweets);
-                                // CHANGE IMAGE
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                            super.onSuccess(statusCode, headers, response);
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s", errorResponse.toString()));
-                            throwable.printStackTrace();
-
-                            Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                            Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s", errorResponse.toString()));
-                            throwable.printStackTrace();
-
-                            Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s", responseString));
-                            throwable.printStackTrace();
-
-                            Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                            super.onSuccess(statusCode, headers, responseString);
-                        }
-                    });
-                }
-
             }
         });
 
         // Like listener event
-        ivLikeD.setOnClickListener(new View.OnClickListener(){
+        ivLikeD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "Like not implemented", Toast.LENGTH_SHORT).show();
+                if (!tLiked){
+                    client.likeTweet(tUid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tvLikesD.setText(Long.toString(tLikes + 1));
+                            tLiked = true;
+                            ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_solid_red_svg));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(getBaseContext(), "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    client.unlikeTweet(tUid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            tvLikesD.setText(Long.toString(tLikes));
+                            tLiked = false;
+                            ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_clear_light_blue_svg));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(getBaseContext(), "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
     }

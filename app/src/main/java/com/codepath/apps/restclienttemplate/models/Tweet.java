@@ -19,12 +19,12 @@ public class Tweet {
     public String body, createdAt;
     public long uid; // DB id for the tweet
     public User user;
+    public Media media;
     public int retweetCount, likeCount;
-    public boolean tweetLiked, tweetRetweeted;
+    public boolean tweetLiked, tweetRetweeted, mediaFound;
 
     // deserialize the JSON
-    public Tweet() {
-    }
+    public Tweet() {}
 
     public static Tweet fromJSON(JSONObject jsonObject) throws JSONException{
         Tweet tweet = new Tweet();
@@ -33,7 +33,16 @@ public class Tweet {
         tweet.body = jsonObject.getString("text");
         tweet.uid = jsonObject.getLong("id");
         tweet.createdAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
+        // user and media
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+        try {
+            tweet.media = Media.fromJSON(jsonObject.getJSONObject("entities").getJSONArray("media"));
+            tweet.mediaFound = true;
+        } catch (JSONException e) {
+            tweet.media = null;
+            tweet.mediaFound = false;
+        }
+
         tweet.retweetCount = jsonObject.getInt("retweet_count");
         tweet.likeCount = jsonObject.getInt("favorite_count");
         tweet.tweetRetweeted = jsonObject.getBoolean("retweeted");
