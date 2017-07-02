@@ -59,10 +59,10 @@ The following **additional** features are implemented:
   * [x] Improve the quality of the images received
   * [x] Remove Toast Statements on onClick events from TweetAdapter
   * [x] On reply, set handler to tweet id (in reply to, check twitter API) so that replies work in actual replies
+  * [x] For images of tweets, have a different placeholder than the one of profile photos (similar to Flixster app placeholder)
   * [ ] Fix bugs resulting from infinite scroll and repeating the same tweets over and ove 
   * [ ] Add a backpress button when user enters reply to a tweet (instead of letting be for the regular android backPress)
   * [ ] When click on backPress in the timeline, it just restart the application instead of quitting it. Fixing this bug would be a goal
-  * [ ] For images of tweets, have a different placeholder than the one of profile photos (similar to Flixster app placeholder)
 
 ## Video Walkthrough
 
