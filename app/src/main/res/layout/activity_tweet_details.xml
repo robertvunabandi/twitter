@@ -122,7 +122,7 @@
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_person_v1_svg" />
+                    app:srcCompat="@drawable/ic_picture_placeholder_svg" />
             </RelativeLayout>
 
             <View

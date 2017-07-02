@@ -83,8 +83,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
             ivTweetedImageD.setVisibility(View.VISIBLE);
             Glide.with(getBaseContext()).load(getIntent().getStringExtra("tMediaUrlHTTPS"))
                     .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 20, 0))
-                    .placeholder(R.drawable.ic_person_v3_svg)
-                    .error(R.drawable.ic_person_v3_svg)
+                    .placeholder(R.drawable.ic_picture_placeholder_svg)
+                    .error(R.drawable.ic_picture_placeholder_svg)
                     .into(ivTweetedImageD);
         } else {
             mediaSeparatorD.setVisibility(View.GONE);

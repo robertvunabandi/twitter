@@ -87,7 +87,8 @@
             android:paddingRight="8dp"
             android:paddingTop="8dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_person_v3_svg" />
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_picture_placeholder_svg" />
 
     </RelativeLayout>
 

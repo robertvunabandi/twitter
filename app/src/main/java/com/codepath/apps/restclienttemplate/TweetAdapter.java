@@ -73,8 +73,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             holder.ivTweetedImage.setVisibility(View.VISIBLE);
             Glide.with(context).load(tweet.media.urlHTTPS)
                     .bitmapTransform(new RoundedCornersTransformation(context, 20, 0))
-                    .placeholder(R.drawable.ic_person_v3_svg)
-                    .error(R.drawable.ic_person_v3_svg)
+                    .placeholder(R.drawable.ic_picture_placeholder_svg)
+                    .error(R.drawable.ic_picture_placeholder_svg)
                     .into(holder.ivTweetedImage);
         } else {
             holder.ivTweetedImage.setVisibility(View.GONE);
@@ -223,18 +223,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public void onClick(View v) {
             final Context context = v.getContext();
             int position = getAdapterPosition();
-            /* if (v.getId() == ibReply.getId()) {
-                // Toast.makeText(v.getContext(), "ITEM PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
-                // if we get the reply click, then we want to create another intent from the context of the item clicked (v.context)
-                long reply_uid;
 
-                Intent i = new Intent(context, ComposeActivity.class);
-                i.putExtra("text", mTweets.get(getAdapterPosition()).user.screenName);
-                reply_uid = mTweets.get(getAdapterPosition()).uid;
-                i.putExtra("reply_uid", reply_uid);
-                context.startActivity(i);
-
-            // } else */
             if (v.getId() == tvUserName.getId() || v.getId() == tvBody.getId() || v.getId() == tvScreenName.getId() || v.getId() == ivTweetedImage.getId()) {
                 // Send the user to a tweet details class
                 Intent i = new Intent(context, TweetDetailsActivity.class);
