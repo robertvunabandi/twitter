@@ -30,19 +30,19 @@ The following **optional** features are implemented:
 * [x] User can **select "reply" from detail view to respond to a tweet**
   * [x] User that wrote the original tweet is **automatically "@" replied in compose**
 * [x] User can tap a tweet to **open a detailed tweet view**
-  * [ ] User can **take favorite (and unfavorite) or reweet** actions on a tweet
+  * [x] User can **take favorite (and unfavorite) or reweet** actions on a tweet
     * [x] User can retweet/unretweet in detailed tweet mode.
-* [ ] User can **see embedded image media within a tweet** on list or detail view.
+* [x] User can **see embedded image media within a tweet** on list or detail view.
 
 The following **bonus** features are implemented:
 
 * [x] User can view more tweets as they scroll with infinite pagination
 * [ ] Compose tweet functionality is build using modal overlay
 * [x] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.com/android/Using-Parceler).
-* [ ] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.com/android/Drawables#vector-drawables) where appropriate.
+* [x] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.com/android/Drawables#vector-drawables) where appropriate.
 * [x] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [ ] User can view following / followers list through any profile they view.
-* [ ] User can see embedded image media within the tweet detail view
+* [x] User can see embedded image media within the tweet detail view
 * [ ] Use the popular ButterKnife annotation library to reduce view boilerplate.
 * [ ] On the Twitter timeline, leverage the [CoordinatorLayout](http://guides.codepath.com/android/Handling-Scrolls-with-CoordinatorLayout#responding-to-scroll-events) to apply scrolling behavior that [hides / shows the toolbar](http://guides.codepath.com/android/Using-the-App-ToolBar#reacting-to-scroll).
 * [ ] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
@@ -55,7 +55,8 @@ The following **additional** features are implemented:
   * [x] Display activity text instead of AppName ("TWITTER"). e.g.: Home, New Tweet / In Reply To , Tweet (for detailed tweet)
   * [x] Improve the quality of the images received
   * [ ] Remove Toast Statements on onClick events from TweetAdapter
-  * [ ] On reply, set handler to tweet id (in reply to, check twitter API) so that replies work in actual replies
+  * [x] On reply, set handler to tweet id (in reply to, check twitter API) so that replies work in actual replies
+  * [ ] Fix bugs resulting from infinite scroll and repeating the same tweets over and ove 
 
 ## Video Walkthrough
 
