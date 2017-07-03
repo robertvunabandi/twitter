@@ -39,7 +39,8 @@
         <activity
             android:name=".ComposeActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".TweetDetailsActivity"></activity>
+        <activity android:name=".TweetDetailsActivity" />
+        <activity android:name=".UserProfileActivity" android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
     </application>
 
 </manifest>

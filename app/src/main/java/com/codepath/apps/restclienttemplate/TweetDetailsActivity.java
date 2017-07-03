@@ -74,15 +74,15 @@ public class TweetDetailsActivity extends AppCompatActivity {
         tvRetweetsD.setText(Long.toString(tRetweets));
         tvLikesD.setText(Long.toString(tLikes));
 
-        if (tRetweeted) ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_green_svg));
-        else ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_svg));
-        if (tLiked) ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_solid_red_svg));
-        else ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_clear_light_blue_svg));
+        if (tRetweeted) ivRetweetD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_retweet_green_svg));
+        else ivRetweetD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_retweet_svg));
+        if (tLiked) ivLikeD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_heart_solid_red_svg));
+        else ivLikeD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_heart_clear_light_blue_svg));
         if (tMediaFound) {
             mediaSeparatorD.setVisibility(View.VISIBLE);
             ivTweetedImageD.setVisibility(View.VISIBLE);
-            Glide.with(getBaseContext()).load(getIntent().getStringExtra("tMediaUrlHTTPS"))
-                    .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 20, 0))
+            Glide.with(TweetDetailsActivity.this).load(getIntent().getStringExtra("tMediaUrlHTTPS"))
+                    .bitmapTransform(new RoundedCornersTransformation(TweetDetailsActivity.this, 20, 0))
                     .placeholder(R.drawable.ic_picture_placeholder_svg)
                     .error(R.drawable.ic_picture_placeholder_svg)
                     .into(ivTweetedImageD);
@@ -119,12 +119,12 @@ public class TweetDetailsActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             tvRetweetsD.setText(Long.toString(tRetweets + 1));
                             tRetweeted = true;
-                            ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_green_svg));
+                            ivRetweetD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_retweet_green_svg));
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Toast.makeText(getBaseContext(), "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TweetDetailsActivity.this, "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
@@ -133,12 +133,12 @@ public class TweetDetailsActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             tvRetweetsD.setText(Long.toString(tRetweets));
                             tRetweeted = false;
-                            ivRetweetD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_retweet_svg));
+                            ivRetweetD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_retweet_svg));
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Toast.makeText(getBaseContext(), "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TweetDetailsActivity.this, "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -155,12 +155,12 @@ public class TweetDetailsActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             tvLikesD.setText(Long.toString(tLikes + 1));
                             tLiked = true;
-                            ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_solid_red_svg));
+                            ivLikeD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_heart_solid_red_svg));
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Toast.makeText(getBaseContext(), "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TweetDetailsActivity.this, "Error occured while processing retweet action", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
@@ -169,15 +169,25 @@ public class TweetDetailsActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             tvLikesD.setText(Long.toString(tLikes));
                             tLiked = false;
-                            ivLikeD.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_heart_clear_light_blue_svg));
+                            ivLikeD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_heart_clear_light_blue_svg));
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Toast.makeText(getBaseContext(), "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TweetDetailsActivity.this, "Error occured while processing unretweet action", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
+            }
+        });
+
+        ivProfileImageD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(TweetDetailsActivity.this, UserProfileActivity.class);
+                i.putExtra("user_uid", tUid);
+                i.putExtra("screenName", tScreenName);
+                startActivity(i);
             }
         });
     }

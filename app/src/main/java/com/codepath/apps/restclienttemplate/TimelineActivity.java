@@ -30,16 +30,18 @@ public class TimelineActivity extends AppCompatActivity {
     // TODO - Cite face icon placeholder: https://material.io/icons/#ic_face (FROM MATERIAL DESIGN)
 
     private TwitterClient client;
-    TweetAdapter tweetAdapter;
     public FloatingActionButton fabCompose;
+
+    TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
+
     private SwipeRefreshLayout swipeContainer; // for swiping to refresh tweets
     private ProgressBar pb;
     int totalTweets = 30;
     Calendar CAL = Calendar.getInstance();
     SimpleDateFormat HMS = new SimpleDateFormat("HH:mm:ss");
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);;
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
     public static final String TAG = "TimelineActivityTAG";
 

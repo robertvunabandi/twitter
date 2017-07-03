@@ -47,6 +47,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_gravity="bottom|right"
+        android:background="@color/colorAccent"
+        android:backgroundTint="@color/colorAccent"
         android:layout_margin="16dp"
         android:elevation="8dp"
         android:scaleType="center"

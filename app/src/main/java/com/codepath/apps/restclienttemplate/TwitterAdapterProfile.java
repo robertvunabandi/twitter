@@ -24,17 +24,18 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by robertvunabandi on 6/26/17.
+ * Created this TwitterAdapterProfile because it seemed like the same List from timeline was being modified when referring to TweetAdapter
  */
 
-public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
+public class TwitterAdapterProfile extends RecyclerView.Adapter<TwitterAdapterProfile.ViewHolder> {
     static private List<Tweet> mTweets;
     private Context context;
     public long max_id = Long.MAX_VALUE; // lowest id
-    // public static final String TAG = "TweetAdapter";
+    // public static final String TAG = "TwitterAdapterProfile";
     private static TwitterClient client; // assign a variable for the twitter client
 
     // pass in the tweet array
-    public TweetAdapter(List<Tweet> tweets) {
+    public TwitterAdapterProfile(List<Tweet> tweets) {
         mTweets = tweets;
     }
     // for each row, we need to inflate the layout and cache reference into ViewHolder
@@ -206,7 +207,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public ViewHolder (View itemView) {
             super(itemView);
 
-             // perform findViewById lookups
+            // perform findViewById lookups
             ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
             tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
             tvBody = (TextView) itemView.findViewById(R.id.tvBodyD);

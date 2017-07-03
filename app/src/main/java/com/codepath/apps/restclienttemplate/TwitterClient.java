@@ -44,7 +44,6 @@ public class TwitterClient extends OAuthBaseClient {
                         context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
     }
 
-    // CHANGE THIS
     // DEFINE METHODS for different API endpoints here
     public void getHomeTimeline(int count, AsyncHttpResponseHandler handler) {
         String apiUrl = getApiUrl("statuses/home_timeline.json");
@@ -107,6 +106,56 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("id", uid);
         client.post(apiUrl, params, handler);
     }
+
+    public void user(long uid, String screenName, AsyncHttpResponseHandler handler) {
+        // returns the info about a users profile
+        String apiUrl = getApiUrl("users/show.json");
+        RequestParams params = new RequestParams();
+        params.put("user_id", uid);
+        params.put("screen_name", screenName);
+        params.put("include_entities", true);
+        client.get(apiUrl, params, handler);
+    }
+
+    // METHODS FOR LATER TODO - Fix userFollowers and userFollowings
+    public void getUserTimeline(String screenName, long count, AsyncHttpResponseHandler handler) {
+        // returns the statuses of the user specified by the uid, set count to 20 and maxId to LONG.MAXVALUE for now
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenName);
+        params.put("count", count); // how many tweets to get
+        // params.put("include_rts", true);
+        // params.put("exclude_replies", false);
+        client.get(apiUrl, params, handler);
+    }
+
+    public void addToUserTimeline(String screenName, long maxId, AsyncHttpResponseHandler handler) {
+        // returns the statuses of the user specified by the uid, set count to 20 and maxId to LONG.MAXVALUE for now
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("max_id", maxId); // used for infinite paginations
+        params.put("screen_name", screenName);
+        params.put("count", 30); // how many tweets to get
+        params.put("include_rts", true);
+        params.put("exclude_replies", false);
+        client.get(apiUrl, params, handler);
+    }
+
+    public void userFollowers(){
+        // https://dev.twitter.com/rest/reference/get/followers/list
+        // get the users followers
+        String apiUrl = getApiUrl("followers/list.json");
+        RequestParams params = new RequestParams();
+    }
+
+    public void userFollowings(){
+        // https://dev.twitter.com/rest/reference/get/friends/list
+        // get the users followings
+        String apiUrl = getApiUrl("friends/list.json");
+        RequestParams params = new RequestParams();
+    }
+
+
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
      * 	  i.e getApiUrl("statuses/home_timeline.json");

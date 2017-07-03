@@ -7,6 +7,7 @@
     <color name="colorBackground">#151e29</color>
     <color name="colorWhite">#FFF</color>
     <color name="colorDarkLine">#0c1217</color>
+    <color name="colorDarkLineDarker">#05080a</color>
     <color name="colorLightGrey">#d4e9fc</color>
     <color name="colorLightGreyTransparent">#99d4e9fc</color>
     <color name="colorAccent">#248ff1</color>

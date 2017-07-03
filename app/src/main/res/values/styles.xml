@@ -25,4 +25,9 @@
         <item name="android:background">@color/colorBackground</item>
         <item name="android:textColor">@color/colorWhite</item>
     </style>
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
 </resources>
