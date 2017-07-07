@@ -6,65 +6,122 @@
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
     android:background="@color/colorBackground"
-    android:padding="8dp"
     tools:context="com.codepath.apps.restclienttemplate.ComposeActivity">
 
-    <EditText
-        android:id="@+id/etTweet"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/compose_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="What's in your mind ?"
-        android:inputType="textMultiLine"
-        android:letterSpacing="0.0025"
-        android:lineSpacingExtra="3dp"
-        android:textColor="@color/colorWhite"
-        android:textColorHint="@color/colorAccent"
-        android:textSize="22sp"
-        android:textStyle="italic"
-        android:typeface="normal"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="2dp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ActionBar_Twitter"
+        app:popupTheme="@style/Theme.AppCompat.DayNight">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bTweet"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/compose_toolbar_cancel_button"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:adjustViewBounds="true"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_close_accent" />
+
+            <TextView
+                android:id="@+id/compose_toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:gravity="center"
+                android:text="New tweet"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/compose_toolbar_cancel_button" />
+
+            <ImageView
+                android:id="@+id/compose_toolbar_image"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:adjustViewBounds="true"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_person_v3_svg" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/compose_toolbar"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:background="@color/colorPrimaryDarkLight"
-        android:onClick="onSubmit"
-        android:text="Tweet"
-        android:textAllCaps="false"
-        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Title.Media"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:layout_editor_absoluteX="280dp"
-        tools:layout_editor_absoluteY="52dp" />
+        android:background="@color/colorPrimary"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvCharacterCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/bTweet"
-        android:layout_alignBottom="@+id/bTweet"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="0dp"
-        android:layout_toStartOf="@+id/bTweet"
-        android:text="140"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etTweet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp"
+            android:hint="What's happening?"
+            android:inputType="textMultiLine"
+            android:letterSpacing="0.0025"
+            android:lineSpacingExtra="3dp"
+            android:background="@null"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorLightGreyTransparent"
+            android:textSize="22sp"
+            android:typeface="normal"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="2dp" />
+
+        <Button
+            android:id="@+id/bTweet"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/colorWhite"
+            android:onClick="onSubmit"
+            android:text="Tweet"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification.Title.Media"
+            android:textColor="@color/colorDarkLine"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="280dp"
+            tools:layout_editor_absoluteY="52dp" />
+
+        <TextView
+            android:id="@+id/tvCharacterCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/bTweet"
+            android:layout_alignBottom="@+id/bTweet"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="0dp"
+            android:layout_toStartOf="@+id/bTweet"
+            android:text="140"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/pbLoading"
-        android:visibility="invisible"
-        android:layout_margin="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="16dp"
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -184,6 +184,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 Intent i = new Intent(context, UserProfileActivity.class);
                 i.putExtra("user_uid", tweet.uid);
                 i.putExtra("screenName", tweet.user.screenName);
+                i.putExtra("using_user", false);
                 context.startActivity(i);
             }
         });

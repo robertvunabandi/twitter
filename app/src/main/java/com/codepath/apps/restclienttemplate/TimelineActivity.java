@@ -1,18 +1,28 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.fragments.HomeTimelineFragment;
+import com.codepath.apps.restclienttemplate.fragments.TweetsPagerAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -20,103 +30,139 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import cz.msebera.android.httpclient.Header;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TimelineActivity extends AppCompatActivity {
-    // TODO - Cite face icon placeholder: https://material.io/icons/#ic_face (FROM MATERIAL DESIGN)
 
+    // toolbar stuffs
+    Toolbar home_toolbar;
+    TextView home_toolbar_title;
+    ImageView home_toolbar_image;
+    User using_user;
+
+    // twitter client
     private TwitterClient client;
+    public ViewPager vpPager;
+    public TweetsPagerAdapter pagerAdapter;
+
+    private final int REQUEST_CODE = 200;
+
     public FloatingActionButton fabCompose;
 
-    TweetAdapter tweetAdapter;
-    ArrayList<Tweet> tweets;
-    RecyclerView rvTweets;
 
-    private SwipeRefreshLayout swipeContainer; // for swiping to refresh tweets
-    private ProgressBar pb;
-    int totalTweets = 30;
-    Calendar CAL = Calendar.getInstance();
-    SimpleDateFormat HMS = new SimpleDateFormat("HH:mm:ss");
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    private ProgressBar pb; // TODO - Take care of pb, place it in fragment or something!
 
     public static final String TAG = "TimelineActivityTAG";
+
+    // For scroll hiding and showing
+    // https://mzgreen.github.io/2015/02/15/How-to-hideshow-Toolbar-when-list-is-scroling%28part1%29/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        // get the client
         client = TwitterApp.getRestClient();
 
-        // attach the RecyclerView, the ProgressBar, and the FloatingActionBar
-        rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
+        // get/set the toolbar, set the title to home
+        home_toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+        setSupportActionBar(home_toolbar);
+        home_toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+        getSupportActionBar().setTitle(""); // remove the default title
+        home_toolbar_title = (TextView) findViewById(R.id.home_toolbar_title);
+        home_toolbar_image = (ImageView) findViewById(R.id.home_toolbar_image);
+        getUsingUser();
+        // create the link to the using user's profile
+        home_toolbar_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProfileView();
+            }
+        });
+
+        // attach the ProgressBar and the FloatingActionBar
         pb = (ProgressBar) findViewById(R.id.pbLoading);
+        pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
         fabCompose = (FloatingActionButton) findViewById(R.id.fabCompose);
 
-        // Set up for adapter then populate it with tweets with the length of totalTweets
-        reinitializeTweetsAndAdapter();
-        populateTimeline(totalTweets);
+        // get the view pager
+        vpPager = (ViewPager) findViewById(R.id.viewpager);
+        // set the adapter for the pager
+        pagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager(), this);
+        vpPager.setAdapter(pagerAdapter);
+        // set up the tab layout to use the view pager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(vpPager);
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getBaseContext(), R.color.colorAccent));
+        tabLayout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary));
+        tabLayout.setTabTextColors(ColorStateList.valueOf(ContextCompat.getColor(getBaseContext(), R.color.colorWhite)));
 
-        /* * * * SWIPE START */
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainerRefresher);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Your code to refresh the list here.
-                reinitializeTweetsAndAdapter();
-                // once the network request has completed successfully.
-                populateTimeline(totalTweets);
-                swipeContainer.setRefreshing(false);
-            }
-        });
-        rvTweets.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) {
-                    int lastPosition = layoutManager.findLastVisibleItemPosition();
-                    if (lastPosition > tweets.size() - 2) {
-                        addToTimeline();
-                    }
-                }
-            }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(R.color.colorPrimaryDarkLight, R.color.colorLightGrey, R.color.colorAccent, R.color.colorPrimaryLight);
-        /* SWIPE END * * * */
-
-        /* FLOATING ACTION BAR ON CLICK LISTENER */
         fabCompose.setOnClickListener(new View.OnClickListener() {
-            @Override
+        @Override
             public void onClick(View v) {
                 composeMessage(null);
             }
         });
-
-        /* edit the title to home */
-        getSupportActionBar().setTitle("Home");
     }
 
+    public void getUsingUser(){
+        client.getUsingUser(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    using_user = User.fromJSON(response);
+                    // set the using user profile image
+                    Glide.with(getBaseContext()).load(using_user.profileImageUrl)
+                            .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 2000, 0))
+                            .placeholder(R.drawable.ic_person_v1_svg)
+                            .error(R.drawable.ic_person_v1_svg)
+                            .override(2048, 2048)
+                            .into(home_toolbar_image);
+                } catch (JSONException e) {
+                    Toast.makeText(getBaseContext(), String.format("Error occurred."), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(TAG +" : "+ client.TAG, String.format("Error JSONObject: %s" , errorResponse.toString()));
+                throwable.printStackTrace();
 
-    public void reinitializeTweetsAndAdapter(){
-        pb.setVisibility(ProgressBar.VISIBLE); // set the progress bar to visible
-        tweets = new ArrayList<>(); // init the array list (data source)
-        tweetAdapter = new TweetAdapter(tweets); // construct adapter from data source
-        // tweetAdapter.max_id = max_id_from_timeline; // TEMP
-        rvTweets.setLayoutManager(layoutManager); // RecyclerView setup (layout manager, use adapter)
-        rvTweets.setAdapter(tweetAdapter); // set the Adapter
+                Toast.makeText(getBaseContext(), String.format("An error occurred."), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.e(TAG +" : "+ client.TAG, String.format("Error JSONArray: %s" , errorResponse.toString()));
+                throwable.printStackTrace();
 
-        Log.d(TAG, String.format("Tweets reinitialized at %s", HMS.format(CAL.getTime())));
+                Toast.makeText(getBaseContext(), String.format("An error occurred."), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(TAG +" : "+ client.TAG, String.format("Error String: %s" , responseString));
+                throwable.printStackTrace();
+
+                Toast.makeText(getBaseContext(), String.format("An error occurred."), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private final int REQUEST_CODE = 200;
+    public void onProfileView() {
+        // launch the profile view
+        Intent i = new Intent(TimelineActivity.this, UserProfileActivity.class);
+        i.putExtra("user_uid", using_user.uid);
+        i.putExtra("screenName", using_user.screenName);
+        i.putExtra("using_user", true);
+        startActivity(i);
+    }
+
     public void composeMessage(String text) {
         Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
         i.putExtra("text", text);
         startActivityForResult(i, REQUEST_CODE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // REQUEST_CODE is defined above
@@ -124,139 +170,25 @@ public class TimelineActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             // Extract name value from result extras
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
-
             // add the tweet to the set of tweets at position 0
-            tweets.add(0, tweet);
-            tweetAdapter.notifyItemInserted(0);
-            // scrolls back to position 0 to see the tweet
-            rvTweets.scrollToPosition(0);
+            ((HomeTimelineFragment) pagerAdapter.getItem(vpPager.getCurrentItem())).addTweet(tweet);
+            // fragmentTweetsList.addItemOne(tweet, 0);
             pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
         }
     }
 
-    private void populateTimeline(int count) {
-        // here, the progress bar is not set to visible because this function is always
-        // called after reinitializeTweetsAndAdapter(), which makes the progress bar visible
-        // so we get straight into it with the client.getHomeTimeline
-        client.getHomeTimeline(count, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // FOR JSON OBJECTS
-                Log.d(client.TAG, response.toString());
-            }
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                // iterate through the JSON array, for each entry deserialize the JSON Object
-                Log.d(TAG, String.format("PopulateTimeline | RESPONSE LENGTH %s SUCCESS at %s", response.length(),  HMS.format(CAL.getTime())));
-
-                for (int i = 0; i < response.length(); i++){
-                    // convert each object into a tweet model inserted in the following tweet object
-                    Tweet tweet;
-                    try {
-                        tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        // add the tweet model to our data source
-                        tweets.add(tweet);
-                        // notify the adapter that we've added an item
-                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
-                        // bc we start from 0, the total number of tweets added to our array list will be the size of tweets - 1
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d(TAG, String.format("PopulateTimeline | Tweet at index %s SUCCESS at %s", i,  HMS.format(CAL.getTime())));
-                }
-                Log.d(TAG, String.format("PopulateTimeline SUCCESS at %s", HMS.format(CAL.getTime())));
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(client.TAG, String.format("REGULAR FAILURE: %s" , responseString));
-                throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e(client.TAG, String.format("JSON OBJECT FAILURE: %s" ,errorResponse.toString()));
-                throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s" ,errorResponse.toString()));
-                throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-        });
+    private void hideViews() {
+        // hides the toolbar
+        home_toolbar.animate().translationY(-home_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
     }
 
-    private void addToTimeline() {
-        pb.setVisibility(ProgressBar.VISIBLE); // show the progress bar
-        Log.d(TAG, String.format("addToTimeline at %s", HMS.format(CAL.getTime())));
-        client.addToTimeline(tweetAdapter.max_id, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                for (int i = 0; i < response.length(); i++){
-
-                    // convert each object into a tweet model
-                    Tweet tweet;
-                    try {
-                        tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        // add the tweet model to our data source
-                        tweets.add(tweet);
-                        // notify the adapter that we've added an item
-                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
-                        // bc we start from 0, the total number of tweets added to our array list will be the size of tweets - 1
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                totalTweets = tweets.size(); // changes the number of total tweets
-                Log.d(TAG, String.format("PopulateTimeline SUCCESS at %s", HMS.format(CAL.getTime())));
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d(client.TAG, response.toString());
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e(client.TAG, errorResponse.toString());
-                throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 15 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.e(client.TAG, errorResponse.toString());
-                throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 15 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(client.TAG, responseString);
-                throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the data. Please try again in 15 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-        });
+    private void showViews() {
+        // shows the toolbar
+        home_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
+    /**/
+
     /*
-    @Override
-    // function gets called by android!
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.compose, menu);
-        return true;
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items

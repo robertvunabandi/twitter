@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +19,6 @@ import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetDetailsActivity extends AppCompatActivity {
-    public View mediaSeparatorD;
     public ImageView ivProfileImageD, ibReplyD, ivRetweetD, ivLikeD, ivTweetedImageD;
     public TextView tvNameD, tvScreenNameD, tvBodyD, tvCreatedAtD, tvRetweetsD, tvLikesD;
     public long tUid;
@@ -28,14 +28,33 @@ public class TweetDetailsActivity extends AppCompatActivity {
     public String tName, tScreenName, tBody, tCreatedAt, tProfileImageUrl;
     public long tRetweets, tLikes;
 
+    // toolbar stuffs
+    Toolbar tweet_detail_toolbar;
+    TextView tweet_detail_toolbar_title;
+    ImageView tweet_detail_toolbar_back_button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_details);
-        getSupportActionBar().setTitle("Tweet");
 
         // get the twitter client
         client = TwitterApp.getRestClient();
+
+        // get/set the toolbar, set the title to home
+        tweet_detail_toolbar = (Toolbar) findViewById(R.id.tweet_detail_toolbar);
+        setSupportActionBar(tweet_detail_toolbar);
+        tweet_detail_toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+        getSupportActionBar().setTitle(""); // remove the default title
+        tweet_detail_toolbar_title = (TextView) findViewById(R.id.tweet_detail_toolbar_title);
+        tweet_detail_toolbar_back_button = (ImageView) findViewById(R.id.tweet_detail_toolbar_back_button);
+        // create the link to the using user's profile
+        tweet_detail_toolbar_back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // set those variables to values received from the intent
         tName = getIntent().getStringExtra("tName");
@@ -63,7 +82,6 @@ public class TweetDetailsActivity extends AppCompatActivity {
         ivRetweetD = (ImageView) findViewById(R.id.ivRetweetD);
         ivLikeD = (ImageView) findViewById(R.id.ivLoveTweetD);
         ivTweetedImageD = (ImageView) findViewById(R.id.ivTweetedImageD);
-        mediaSeparatorD = findViewById(R.id.mediaSeparatorD);
 
         // set the texts
         tvNameD.setText(tName);
@@ -79,7 +97,6 @@ public class TweetDetailsActivity extends AppCompatActivity {
         if (tLiked) ivLikeD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_heart_solid_red_svg));
         else ivLikeD.setImageDrawable(ContextCompat.getDrawable(TweetDetailsActivity.this, R.drawable.ic_heart_clear_light_blue_svg));
         if (tMediaFound) {
-            mediaSeparatorD.setVisibility(View.VISIBLE);
             ivTweetedImageD.setVisibility(View.VISIBLE);
             Glide.with(TweetDetailsActivity.this).load(getIntent().getStringExtra("tMediaUrlHTTPS"))
                     .bitmapTransform(new RoundedCornersTransformation(TweetDetailsActivity.this, 20, 0))
@@ -87,7 +104,6 @@ public class TweetDetailsActivity extends AppCompatActivity {
                     .error(R.drawable.ic_picture_placeholder_svg)
                     .into(ivTweetedImageD);
         } else {
-            mediaSeparatorD.setVisibility(View.GONE);
             ivTweetedImageD.setVisibility(View.GONE);
         }
 

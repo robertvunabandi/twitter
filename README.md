@@ -61,8 +61,10 @@ The following **additional** features are implemented:
   * [x] On reply, set handler to tweet id (in reply to, check twitter API) so that replies work in actual replies
   * [x] For images of tweets, have a different placeholder than the one of profile photos (similar to Flixster app placeholder)
   * [ ] Make infinite pagination on user profile's tweets
+  * [ ] Make the follow button actually work
+  * [ ] Add tabs to user profile
   * [ ] User can see a user's profile by clicking on the profile picture of the user.
-  * [ ] Fix bugs resulting from infinite scroll and repeating the same tweets over and ove 
+  * [ ] Fix bugs resulting from infinite scroll and repeating the same tweets over and over when web error occurs
   * [ ] Add a backpress button when user enters reply to a tweet (instead of letting be for the regular android backPress)
   * [ ] When click on backPress in the timeline, it just restart the application instead of quitting it. Fixing this bug would be a goal
   * [ ] Make the follow button work on user profiles

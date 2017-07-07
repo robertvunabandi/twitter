@@ -1,33 +1,22 @@
 <resources>
 
-    <!--<style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme_Twitter" parent="Theme.AppCompat.DayNight">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionBarStyle">@style/ActionBar_Twitter</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/colorBackground</item>
+    <style name="ActionBar_Twitter" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@color/colorWhite</item>
     </style>
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
+    <style name="AppTheme_Twitter.NoActionBar" parent="AppTheme_Twitter">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>

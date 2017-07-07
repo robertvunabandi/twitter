@@ -7,266 +7,316 @@
     android:background="@color/colorBackground"
     tools:context="com.codepath.apps.restclienttemplate.TweetDetailsActivity">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tweet_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ActionBar_Twitter"
+        app:popupTheme="@style/Theme.AppCompat.DayNight"
+        android:elevation="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/rlUser"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/tweet_detail_toolbar_back_button"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:adjustViewBounds="true"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_back_button_accent" />
+
+            <TextView
+                android:id="@+id/tweet_detail_toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:gravity="center"
+                android:text="Tweet"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:layout_alignParentTop="true"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp">
+                android:layout_toEndOf="@+id/tweet_detail_toolbar_back_button" />
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/tvNameD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="8dp"
-                    android:layout_toEndOf="@+id/ivProfileImageD"
-                    android:text="tvNameD"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/ivProfileImageD"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_alignParentStart="true"
-                    app:srcCompat="@drawable/ic_face_placeholder" />
+    </android.support.v7.widget.Toolbar>
 
-                <TextView
-                    android:id="@+id/tvScreenNameD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvNameD"
-                    android:layout_marginLeft="8dp"
-                    android:layout_toEndOf="@+id/ivProfileImageD"
-                    android:text="tvScreenNameD"
-                    android:textColor="@color/colorLightGrey"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/vtSeparator1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/rlUser"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorDarkLine" />
-
-            <!-- TWEET BODY -->
-            <!-- TWEET BODY -->
-            <!-- TWEET BODY -->
-            <RelativeLayout
-                android:id="@+id/rlBody"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/vtSeparator1"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
-
-                <TextView
-                    android:id="@+id/tvBodyD"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:autoLink="all"
-                    android:text="tvBodyD"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="22sp" />
-
-                <TextView
-                    android:id="@+id/tvCreatedAtD"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvBodyD"
-                    android:text="tvCreatedAtD"
-                    android:textColor="@color/colorLightGrey"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/mediaSeparatorD"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/rlBody"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorDarkLine" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tweet_detail_toolbar">
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
 
             <RelativeLayout
-                android:id="@+id/rlImageTweeted"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/mediaSeparatorD"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/ivTweetedImageD"
+                <RelativeLayout
+                    android:id="@+id/rlUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:adjustViewBounds="true"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_picture_placeholder_svg" />
+                    android:paddingTop="8dp">
+
+                    <ImageView
+                        android:id="@+id/ivProfileImageD"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_alignParentStart="true"
+                        app:srcCompat="@drawable/ic_face_placeholder" />
+
+                    <TextView
+                        android:id="@+id/tvNameD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_toEndOf="@+id/ivProfileImageD"
+                        android:text="tvNameD"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvScreenNameD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvNameD"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toEndOf="@+id/ivProfileImageD"
+                        android:text="tvScreenNameD"
+                        android:textColor="@color/colorLightGrey"
+                        android:textSize="16sp"
+                        android:textStyle="italic" />
+
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/vtSeparator1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/rlUser"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorDarkLine" />
+
+                <!-- TWEET BODY -->
+                <!-- TWEET BODY -->
+                <!-- TWEET BODY -->
+                <RelativeLayout
+                    android:id="@+id/rlBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/vtSeparator1"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:id="@+id/tvBodyD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:autoLink="all"
+                        android:text="tvBodyD"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="22sp" />
+
+                    <ImageView
+                        android:id="@+id/ivTweetedImageD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvBodyD"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginTop="12dp"
+                        android:adjustViewBounds="true"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_picture_placeholder_svg" />
+
+                    <TextView
+                        android:id="@+id/tvCreatedAtD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ivTweetedImageD"
+                        android:layout_marginTop="4dp"
+                        android:text="tvCreatedAtD"
+                        android:textColor="@color/colorLightGrey"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/vtSeparator2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/rlBody"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorDarkLine" />
+
+                <!-- TWEET INFO -->
+                <!-- TWEET INFO -->
+                <!-- TWEET INFO -->
+                <RelativeLayout
+                    android:id="@+id/rlTweetsInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/vtSeparator2"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:id="@+id/tvRetweetsD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:text="0"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvRetweetsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/tvRetweetsD"
+                        android:text="Retweets"
+                        android:textColor="@color/colorLightGrey"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvLikesD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@+id/tvRetweetsText"
+                        android:text="0"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvLikesText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/tvLikesD"
+                        android:text="Likes"
+                        android:textColor="@color/colorLightGrey"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/vtSeparator3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/rlTweetsInfo"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorDarkLine" />
+
+                <!-- BUTTONS -->
+                <!-- BUTTONS -->
+                <!-- BUTTONS -->
+                <LinearLayout
+                    android:id="@+id/rlButtons"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/vtSeparator3"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/ibReplyD"
+                            style="@android:style/Widget.ImageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentTop="true"
+                            android:adjustViewBounds="false"
+                            android:background="#00000000"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/ic_reply_svg" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/ivRetweetD"
+                            style="@android:style/Widget.ImageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentTop="true"
+                            android:adjustViewBounds="false"
+                            android:background="#00000000"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/ic_retweet_svg" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/ivLoveTweetD"
+                            style="@android:style/Widget.ImageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentTop="true"
+                            android:adjustViewBounds="false"
+                            android:background="#00000000"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/ic_heart_clear_light_blue_svg" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/vtSeparator4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/rlButtons"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorDarkLine" />
+                <!--</ScrollView>-->
             </RelativeLayout>
-
-            <View
-                android:id="@+id/vtSeparator2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/rlImageTweeted"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorDarkLine" />
-
-            <!-- TWEET INFO -->
-            <!-- TWEET INFO -->
-            <!-- TWEET INFO -->
-            <RelativeLayout
-                android:id="@+id/rlTweetsInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/vtSeparator2"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
-
-                <TextView
-                    android:id="@+id/tvRetweetsD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="4dp"
-                    android:text="0"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/tvRetweetsText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginRight="16dp"
-                    android:layout_toEndOf="@+id/tvRetweetsD"
-                    android:text="Retweets"
-                    android:textColor="@color/colorLightGrey"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/tvLikesD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_toEndOf="@+id/tvRetweetsText"
-                    android:text="0"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/tvLikesText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/tvLikesD"
-                    android:text="Likes"
-                    android:textColor="@color/colorLightGrey"
-                    android:textSize="20sp" />
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/vtSeparator3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/rlTweetsInfo"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorDarkLine" />
-
-            <!-- BUTTONS -->
-            <!-- BUTTONS -->
-            <!-- BUTTONS -->
-            <LinearLayout
-                android:id="@+id/rlButtons"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/vtSeparator3"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
-
-                <ImageView
-                    android:id="@+id/ibReplyD"
-                    style="@android:style/Widget.ImageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:adjustViewBounds="false"
-                    android:background="#00000000"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_reply_svg" />
-
-                <ImageView
-                    android:id="@+id/ivRetweetD"
-                    style="@android:style/Widget.ImageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:adjustViewBounds="false"
-                    android:background="#00000000"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_retweet_svg" />
-
-
-                <ImageView
-                    android:id="@+id/ivLoveTweetD"
-                    style="@android:style/Widget.ImageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:adjustViewBounds="false"
-                    android:background="#00000000"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_heart_clear_light_blue_svg" />
-
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/vtSeparator4"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/rlButtons"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorDarkLine" />
-            <!--</ScrollView>-->
-        </RelativeLayout>
-    </ScrollView>
-
+        </ScrollView>
+    </RelativeLayout>
 </RelativeLayout>
 

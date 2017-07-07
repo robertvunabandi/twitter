@@ -16,9 +16,9 @@ public class User {
     public String name, screenName, profileImageUrl;
     public long uid;
     // variables for user details
-    public String profileImageUrlHTTPS, profileBackgroundImageUrl, profileBackgroundImageUrlHTTPS, profileBackgroundColor, createdAt, description;
+    public String profileImageUrlHTTPS, profileBackgroundImageUrl, profileBackgroundImageUrlHTTPS, profileBannerUrl, profileBackgroundColor, createdAt, description;
     public long followersCount, followingsCount;
-    public boolean verifiedUser, followsYou;
+    public boolean verifiedUser, followsYou, following;
 
     public User() {}
 
@@ -37,11 +37,13 @@ public class User {
         user.description = jsonObject.getString("description");
         user.profileBackgroundImageUrl = jsonObject.getString("profile_background_image_url").replace("_normal","");
         user.profileBackgroundColor = jsonObject.getString("profile_background_color");
+        user.profileBannerUrl = jsonObject.getString("profile_banner_url");
         user.createdAt = getRelativeTimeAgo(jsonObject.getString("created_at")); // when the user was first on twitter
         user.followersCount = jsonObject.getLong("followers_count");
         user.followingsCount = jsonObject.getLong("friends_count"); // it could be listed_count as well
         user.verifiedUser = jsonObject.getBoolean("verified");
         user.followsYou = jsonObject.getBoolean("following");
+        user.following = false; // boolean to modify in case it's true
 
         return user;
     }

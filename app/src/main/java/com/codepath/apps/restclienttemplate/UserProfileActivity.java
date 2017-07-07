@@ -2,19 +2,18 @@ package com.codepath.apps.restclienttemplate;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ViewTreeObserver;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.fragments.UserTimelineFragment;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -23,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
@@ -39,34 +37,22 @@ public class UserProfileActivity extends AppCompatActivity {
     Calendar CAL = Calendar.getInstance();
     SimpleDateFormat HMS = new SimpleDateFormat("HH:mm:ss");
 
-    // recycler view for tweets shown on user timeline
-    int totalTweets = 30;
-    TwitterAdapterProfile tweetAdapter;
-    ArrayList<Tweet> tweets;
-    RecyclerView rvTweetsP;
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     private ProgressBar pb;
 
-    // Others
-    ScrollView scrollProfile;
-    android.app.ActionBar actionBar;
-
     // get the views
-    public TextView tvUserNameP, tvScreenNameP, tvSinceP, tvFollowersCount, tvFollowers, tvFollowingsCount, tvFollowings, tvUserDescription;
+    public TextView tvUserNameP, tvScreenNameP, tvSinceP, tvFollowersCount, tvFollowers, tvFollowingsCount, tvFollowings, tvUserDescription, tvFollowsYou;
     public ImageView bannerImage;
+    public Button followButton;
     public FloatingActionButton ivProfileImageP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
         client = TwitterApp.getRestClient();
 
-        rvTweetsP = (RecyclerView) findViewById(R.id.rvTweetP);
         pb = (ProgressBar) findViewById(R.id.pbLoading);
-        scrollProfile = (ScrollView) findViewById(R.id.scrollProfile);
-        // actionBar = getActionBar();
-
 
         userId = getIntent().getLongExtra("user_uid", -1);
         screenName = getIntent().getStringExtra("screenName");
@@ -76,8 +62,8 @@ public class UserProfileActivity extends AppCompatActivity {
             onError(0, "Screen name was null");
         }
 
-        // set the title
-
+        // set the title to the screen name
+        // getSupportActionBar().setTitle(screenName);
 
         tvUserNameP = (TextView) findViewById(R.id.tvUserNameP);
         tvScreenNameP = (TextView) findViewById(R.id.tvScreenNameP);
@@ -87,6 +73,9 @@ public class UserProfileActivity extends AppCompatActivity {
         tvFollowingsCount = (TextView) findViewById(R.id.tvFollowingsCount);
         tvFollowings = (TextView) findViewById(R.id.tvFollowings);
         tvUserDescription = (TextView) findViewById(R.id.tvUserDescription);
+        tvFollowsYou = (TextView) findViewById(R.id.tvFollowsYou);
+
+        followButton = (Button) findViewById(R.id.followButton);
 
         ivProfileImageP = (FloatingActionButton) findViewById(R.id.ivProfileImageP);
         bannerImage = (ImageView) findViewById(R.id.bannerImage);
@@ -97,120 +86,152 @@ public class UserProfileActivity extends AppCompatActivity {
                 try {
                     user = User.fromJSON(response);
 
-                    // populate the screen with info gathered
-                    tvUserNameP.setText(user.name);
-                    tvScreenNameP.setText("@"+user.screenName);
-                    tvSinceP.setText("On Twitter since " + user.createdAt);
-                    tvFollowersCount.setText(Long.toString(user.followersCount));
-                    tvFollowingsCount.setText(Long.toString(user.followingsCount));
-                    tvUserDescription.setText(user.description);
-                    // add the images
-                    Glide.with(getBaseContext()).load(user.profileImageUrl)
-                            .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 2000, 0))
-                            .placeholder(R.drawable.ic_person_v1_svg)
-                            .error(R.drawable.ic_person_v1_svg)
-                            .into(ivProfileImageP);
-
-                    Glide.with(getBaseContext()).load(user.profileBackgroundImageUrl)
-                            .placeholder(Integer.parseInt(user.profileBackgroundColor, 16)+0xFF000000)
-                            .error(Integer.parseInt(user.profileBackgroundColor, 16)+0xFF000000)
-                            .into(bannerImage);
-
+                    // populate the headline, see method below
+                    populateUserHeadline(user);
 
                 } catch (JSONException e) {
                     onError(1, null);
                     e.printStackTrace();
                 }
 
-                // Set up for adapter then populate it with tweets with the length of totalTweets
-                reinitializeTweetsAndAdapter();
-                populateUserTimeline(user.screenName, totalTweets);
-            }
-        });
+                // create the fragment
+                UserTimelineFragment userTimelineFragment = UserTimelineFragment.newInstance(screenName);
+                // display the user timeline fragment inside the container
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                // make change
+                ft.replace(R.id.flContainer, userTimelineFragment);
+                // commit
+                ft.commit();
 
-        scrollProfile.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                int scrollY = scrollProfile.getScrollY(); // For ScrollView
-                int newRadius = 100 - scrollY < 0 ? 0 : 100 - scrollY;
-
-                //if (scrollY > 200) { actionBar.show();
-                //} else { actionBar.hide();
-                //}
-
+                pb.setVisibility(View.INVISIBLE); // remove the progress bar
             }
         });
 
     }
 
-    public void reinitializeTweetsAndAdapter(){
-        pb.setVisibility(ProgressBar.VISIBLE); // set the progress bar to visible
-        tweets = new ArrayList<>(); // init the array list (data source)
-        tweetAdapter = new TwitterAdapterProfile(tweets); // construct adapter from data source
-        // tweetAdapter.max_id = max_id_from_timeline; // TEMP
-        rvTweetsP.setLayoutManager(layoutManager); // RecyclerView setup (layout manager, use adapter)
-        rvTweetsP.setAdapter(tweetAdapter); // set the Adapter
+    public void populateUserHeadline(final User user) {
+        // populate the screen with info gathered
+        tvUserNameP.setText(user.name);
+        tvScreenNameP.setText("@"+user.screenName);
+        tvSinceP.setText("On Twitter since " + user.createdAt);
+        tvFollowersCount.setText(Long.toString(user.followersCount));
+        tvFollowingsCount.setText(Long.toString(user.followingsCount));
+        tvUserDescription.setText(user.description);
+        if (user.description.length() <= 1) {
+            tvUserDescription.setVisibility(View.GONE);
+        }
+        // add the images
+        Glide.with(getBaseContext()).load(user.profileImageUrl)
+                .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 2000, 0))
+                .placeholder(R.drawable.ic_person_v1_svg)
+                .error(R.drawable.ic_person_v1_svg)
+                .into(ivProfileImageP);
 
-        Log.d(TAG, String.format("Tweets reinitialized at %s", HMS.format(CAL.getTime())));
-    }
-
-    private void populateUserTimeline(String userScreenName, int count) {
-        // here, the progress bar is not set to visible because this function is always
-        // called after reinitializeTweetsAndAdapter(), which makes the progress bar visible
-        // so we get straight into it with the client.getHomeTimeline
-        // MAX UID (2nd parameter) is to be changed later
-        client.getUserTimeline(userScreenName, count, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // FOR JSON OBJECTS
-                Log.d(client.TAG, response.toString());
-            }
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                // iterate through the JSON array, for each entry deserialize the JSON Object
-                Log.d(TAG, String.format("populateUserTimeline | RESPONSE LENGTH %s SUCCESS at %s", response.length(),  HMS.format(CAL.getTime())));
-
-                for (int i = 0; i < response.length(); i++){
-                    // convert each object into a tweet model inserted in the following tweet object
-                    Tweet tweet;
+        Glide.with(getBaseContext()).load(user.profileBannerUrl)
+                .placeholder(Integer.parseInt(user.profileBackgroundColor, 16)+0xFF000000)
+                .error(Integer.parseInt(user.profileBackgroundColor, 16)+0xFF000000)
+                .into(bannerImage);
+        if (getIntent().getBooleanExtra("using_user", false)) {
+            followButton.setVisibility(View.GONE);
+        } else {
+            followButton.setVisibility(View.VISIBLE);
+            client.userLookup(screenName, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    Log.e(TAG, response.toString());
                     try {
-                        tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        // add the tweet model to our data source
-                        tweets.add(tweet);
-                        // notify the adapter that we've added an item
-                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
-                        // bc we start from 0, the total number of tweets added to our array list will be the size of tweets - 1
+                        JSONArray connections = response.getJSONObject(0).getJSONArray("connections");
+                        for (int i = 0; i < connections.length(); i++){
+                            if (connections.get(i).equals("following")) {
+                                user.following = true;
+                                followButton.setBackground(getResources().getDrawable(R.drawable.button_unfollow));
+                                followButton.setTextColor(getResources().getColor(R.color.colorWhite));
+                                followButton.setText("Unfollow");
+                            }
+                            if (connections.get(i).equals("followed_by")) {
+                                tvFollowsYou.setVisibility(View.VISIBLE);
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.e(TAG, String.format("Error occured while parsing json in unfollow/follow"));
                     }
-                    Log.d(TAG, String.format("populateUserTimeline | Tweet at index %s SUCCESS at %s", i,  HMS.format(CAL.getTime())));
                 }
-                Log.d(TAG, String.format("populateUserTimeline SUCCESS at %s", HMS.format(CAL.getTime())));
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(client.TAG, String.format("REGULAR FAILURE: %s" , responseString));
-                throwable.printStackTrace();
 
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the user tweets. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                    Log.e(TAG, errorResponse.toString());
+                }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.e(TAG, errorResponse.toString());
+                }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    Log.e(TAG, responseString);
+                }
+            });
+        }
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // toggle to button to not following (to false) the person (thus to "follow") if we follow the person
+                // toggle to button to following (to true) the person (thus to "unfollow") if we don't follow the person
+                toggleFollowButton(!user.following);
+
+                // true means we follow the user and want to unfollow them,
+                // changes the status of following for the user if good
+                followToggle(user.following, screenName, user);
             }
+        });
+
+    }
+
+    public void toggleFollowButton(boolean toFollowing) {
+        if (toFollowing) {
+            followButton.setBackground(getResources().getDrawable(R.drawable.button_unfollow));
+            followButton.setTextColor(getResources().getColor(R.color.colorWhite));
+            followButton.setText("Unfollow");
+        } else {
+            followButton.setBackground(getResources().getDrawable(R.drawable.button_follow));
+            followButton.setTextColor(getResources().getColor(R.color.colorAccent));
+            followButton.setText("Follow");
+        }
+    }
+
+    public void followToggle(final boolean followsUser, String screenName, final User user) {
+        final String text = followsUser ? "unfollowing" : "following";
+        client.followToggle(screenName, followsUser, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Toast.makeText(getBaseContext(), String.format("Success %s", text), Toast.LENGTH_SHORT).show();
+                // if it worked, change the status of user to the opposite of what it used to be
+                user.following = !followsUser;
+            }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e(client.TAG, String.format("JSON OBJECT FAILURE: %s", errorResponse.toString()));
+                Log.e(client.TAG, String.format("Failure %s: %s", text, errorResponse.toString()));
                 throwable.printStackTrace();
-
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the user tweets. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
+                Toast.makeText(getBaseContext(), String.format("Failure %s", text), Toast.LENGTH_SHORT).show();
+                toggleFollowButton(followsUser);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.e(client.TAG, String.format("JSON ARRAY FAILURE: %s" ,errorResponse.toString()));
+                Log.e(client.TAG, String.format("Failure %s: %s", text, errorResponse.toString()));
                 throwable.printStackTrace();
+                Toast.makeText(getBaseContext(), String.format("Failure %s", text), Toast.LENGTH_SHORT).show();
+                toggleFollowButton(followsUser);
+            }
 
-                Toast.makeText(getBaseContext(), String.format("An error occurred while acquiring the user tweets. Please try again in 2 minutes."), Toast.LENGTH_LONG).show();
-                pb.setVisibility(ProgressBar.INVISIBLE); // remove the progress bar
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(client.TAG, String.format("Failure %s: %s", text, responseString));
+                throwable.printStackTrace();
+                Toast.makeText(getBaseContext(), String.format("Failure %s", text), Toast.LENGTH_SHORT).show();
+                toggleFollowButton(followsUser);
             }
         });
     }

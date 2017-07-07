@@ -7,14 +7,16 @@
     android:background="@color/colorBackground"
     tools:context="com.codepath.apps.restclienttemplate.UserProfileActivity">
 
-    <ScrollView
+    <RelativeLayout
         android:id="@+id/scrollProfile"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <RelativeLayout
+            android:id="@+id/userHeadline"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
             android:fillViewport="true">
 
             <RelativeLayout
@@ -32,18 +34,36 @@
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/ic_picture_placeholder_svg" />
 
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/ivProfileImageP"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="85dp"
+                    android:background="@color/colorBackground"
+                    android:backgroundTint="@color/colorBackground"
+                    android:elevation="12dp"
+                    android:scaleType="center"
+                    app:fabSize="normal"
+                    app:srcCompat="@drawable/ic_person_v1_svg" />
+
+                <!--HELP FROM STACK OVERFLOW: https://stackoverflow.com/questions/32882742/android-how-to-change-size-of-appfabsize-normal-for-floating-action-button-->
+
                 <Button
+                    android:id="@+id/followButton"
                     style="@android:style/Widget.Button.Toggle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/bannerImage"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/button_follow"
                     android:gravity="center"
-                    android:maxHeight="40dip"
-                    android:minHeight="35dip"
+                    android:maxHeight="36dip"
+                    android:minHeight="32dip"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
                     android:text="Follow"
                     android:textAlignment="center"
                     android:textColor="@color/colorAccent"
@@ -52,30 +72,11 @@
                 <!--app:srcCompat="@color/colorLightGrey"-->
             </RelativeLayout>
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/ivProfileImageP"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="77dp"
-                android:background="@color/colorBackground"
-                android:backgroundTint="@color/colorBackground"
-                android:elevation="8dp"
-                android:padding="2dp"
-                android:scaleType="center"
-                app:fabSize="normal"
-                app:layout_anchor="@id/banner"
-                app:layout_anchorGravity="bottom|left|end"
-
-                app:srcCompat="@drawable/ic_person_v1_svg"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
-
             <RelativeLayout
                 android:id="@+id/rlUserP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ivProfileImageP"
+                android:layout_below="@id/banner"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="4dp">
@@ -97,7 +98,7 @@
                     android:layout_below="@+id/tvUserNameP"
                     android:text="tvScreenNameP"
                     android:textColor="@color/colorLightGrey"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="italic" />
 
                 <TextView
@@ -109,13 +110,12 @@
                     android:layout_toEndOf="@+id/tvScreenNameP"
                     android:background="@drawable/rounded_corners"
                     android:paddingBottom="2dp"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
                     android:paddingTop="2dp"
                     android:text="follows you"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp"
-                    android:textStyle="bold"
                     android:visibility="invisible" />
 
 
@@ -125,11 +125,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvScreenNameP"
-                    android:layout_marginBottom="12dp"
                     android:layout_marginTop="12dp"
+                    android:autoLink="all"
                     android:text="tvUserDescription"
                     android:textColor="@color/colorWhite"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvSinceP"
@@ -137,6 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvUserDescription"
+                    android:layout_marginTop="12dp"
                     android:text="tvSinceP"
                     android:textAlignment="textStart"
                     android:textAllCaps="true"
@@ -153,99 +154,104 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
-                android:paddingLeft="16dp">
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
 
 
                     <TextView
                         android:id="@+id/tvFollowingsCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:text="0"
                         android:textColor="@color/colorWhite"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tvFollowings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:layout_marginLeft="4dp"
                         android:text="Following"
                         android:textColor="@color/colorLightGrey"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_marginLeft="48dp">
 
                     <TextView
                         android:id="@+id/tvFollowersCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:text="0"
                         android:textColor="@color/colorWhite"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tvFollowers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:layout_marginLeft="4dp"
                         android:text="Followers"
                         android:textColor="@color/colorLightGrey"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/lMainSeparator"
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/lMainSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@id/userHeadline"
+            android:background="@color/colorDarkLine">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_below="@id/lUserFollows"
-                android:background="@color/colorDarkLine">
+                android:layout_height="0.8dp"
+                android:background="@color/colorDarkLineDarker" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0.8dp"
-                    android:background="@color/colorDarkLineDarker" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorDarkLineDarker" />
+        </RelativeLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/colorDarkLineDarker" />
-            </RelativeLayout>
-
-            <android.support.v7.widget.RecyclerView
+        <FrameLayout
+            android:id="@+id/flContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/lMainSeparator"
+            android:elevation="8dp"></FrameLayout>
+        <!-- <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvTweetP"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
                 android:layout_alignParentBottom="true"
                 android:layout_below="@id/lMainSeparator"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" /> -->
 
-        </RelativeLayout>
-    </ScrollView>
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/pbLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_gravity="bottom|left"
         android:layout_margin="16dp"
         android:visibility="visible" />

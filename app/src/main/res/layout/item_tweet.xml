@@ -24,36 +24,44 @@
             android:clickable="true"
             app:srcCompat="@drawable/ic_person_v1_svg" />
 
-        <TextView
-            android:id="@+id/tvUserName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/lUserIdentification"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="5dp"
-            android:layout_toEndOf="@+id/ivProfileImage"
-            android:clickable="true"
-            android:fontFamily="sans-serif"
-            android:text="tvUserName"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_toEndOf="@+id/ivProfileImage">
 
-        <TextView
-            android:id="@+id/tvScreenName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/tvUserName"
-            android:layout_below="@+id/tvUserName"
-            android:text="\@"
-            android:textColor="@color/colorLightGrey"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tvUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:fontFamily="sans-serif"
+                android:text="tvUserName"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvScreenName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/tvUserName"
+                android:layout_marginLeft="6dp"
+                android:ellipsize="end"
+                android:text="\@"
+                android:textColor="@color/colorLightGrey"
+                android:textSize="16sp" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tvCreatedAtD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvScreenName"
+            android:layout_below="@+id/lUserIdentification"
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/ivProfileImage"
             android:text="tvCreatedAt"
@@ -83,11 +91,11 @@
             android:layout_below="@+id/tvBodyD"
             android:layout_toEndOf="@+id/ivProfileImage"
             android:adjustViewBounds="true"
+            android:clickable="true"
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
             android:scaleType="fitXY"
-            android:clickable="true"
             app:srcCompat="@drawable/ic_picture_placeholder_svg" />
 
     </RelativeLayout>

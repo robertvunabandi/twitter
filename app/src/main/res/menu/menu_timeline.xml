@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".BookSearchActivity"
     >
     <item
-        android:id="@+id/aCompose"
-        android:icon="@drawable/ic_tweet_quil_accent_svg"
-        android:orderInCategory="5"
-        android:title="aCompose"
-        app:showAsAction="always" />
+        android:id="@+id/miProfile"
+        android:icon="@drawable/ic_person_v1"
+        android:orderInCategory="1"
+        android:title="myProfile"
+        android:onClick="onProfileView"
+        app:showAsAction="ifRoom" />
 </menu>
 

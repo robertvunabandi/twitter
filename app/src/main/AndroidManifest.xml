@@ -12,35 +12,46 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme_Twitter">
+
+        <!--LOGIN-->
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme_Twitter.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="@string/intent_host"
                     android:scheme="@string/intent_scheme" />
             </intent-filter>
         </activity>
+
+        <!--TIMELINE-->
         <activity
             android:name=".TimelineActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme_Twitter.NoActionBar"/>
+
+        <!--COMPOSE-->
         <activity
             android:name=".ComposeActivity"
+            android:theme="@style/AppTheme_Twitter.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".TweetDetailsActivity" />
-        <activity android:name=".UserProfileActivity" android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
-    </application>
 
+        <!--DETAIL-->
+        <activity
+            android:name=".TweetDetailsActivity"
+            android:theme="@style/AppTheme_Twitter.NoActionBar"/>
+
+        <!--PROFILE-->
+        <activity
+            android:name=".UserProfileActivity"
+            android:theme="@style/AppTheme_Twitter.NoActionBar" />
+    </application>
 </manifest>

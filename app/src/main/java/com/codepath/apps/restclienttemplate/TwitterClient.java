@@ -21,19 +21,19 @@ import com.loopj.android.http.RequestParams;
  * 
  */
 public class TwitterClient extends OAuthBaseClient {
-    public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
-    public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
-    public static final String REST_CONSUMER_KEY = "PXZuhfIR5Vk7hi1X4BKOzf8Jv"; // Change this TODO - GIT IGNORE THIS FILE OR CHANGE KEY WHEN UPLOAD
-    public static final String REST_CONSUMER_SECRET = "2xCkNFtQy4evatLxCblAI8RlbSPuFsXLb207NzZVAp5jcByxU3"; // Change this TODO - GIT IGNORE THIS FILE
+    private static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
+    private static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
+    private static final String REST_CONSUMER_KEY = "PXZuhfIR5Vk7hi1X4BKOzf8Jv"; // Change this TODO - GIT IGNORE THIS FILE OR CHANGE KEY WHEN UPLOAD
+    private static final String REST_CONSUMER_SECRET = "2xCkNFtQy4evatLxCblAI8RlbSPuFsXLb207NzZVAp5jcByxU3"; // Change this TODO - GIT IGNORE THIS FILE
 
     // TAG for logging stuffs
     public static final String TAG = "TwitterClient";
 
     // Landing page to indicate the OAuth flow worked in case Chrome for Android 25+ blocks navigation back to the app.
-    public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
+    private static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
 
     // See https://developer.chrome.com/multidevice/android/intents
-    public static final String REST_CALLBACK_URL_TEMPLATE = "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end";
+    private static final String REST_CALLBACK_URL_TEMPLATE = "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end";
 
     public TwitterClient(Context context) {
         super(context, REST_API_INSTANCE,
@@ -49,8 +49,9 @@ public class TwitterClient extends OAuthBaseClient {
         String apiUrl = getApiUrl("statuses/home_timeline.json");
         // Can specify query string params directly or through RequestParams.
         RequestParams params = new RequestParams();
-        params.put("count", count); // fallback is 40
+        params.put("count", count);
         params.put("include_entities", true);
+        params.put("exclude_replies", false);
         // params.put("since_id", 1);
         // params.put("max_id", 1);
         client.get(apiUrl, params, handler);
@@ -59,7 +60,25 @@ public class TwitterClient extends OAuthBaseClient {
     public void addToTimeline(long maxid, AsyncHttpResponseHandler handler) {
         String apiUrl = getApiUrl("statuses/home_timeline.json");
         RequestParams params = new RequestParams();
-        params.put("count", 30);
+        params.put("count", 15);
+        params.put("max_id", maxid-1);
+        params.put("include_entities", true);
+        client.get(apiUrl, params, handler);
+    }
+
+    public void getMentionsTimeline(int count, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        // Can specify query string params directly or through RequestParams.
+        RequestParams params = new RequestParams();
+        params.put("count", count);
+        params.put("include_entities", true);
+        client.get(apiUrl, params, handler);
+    }
+
+    public void addToMentionsTimeline(long maxid, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("count", 15);
         params.put("max_id", maxid-1);
         params.put("include_entities", true);
         client.get(apiUrl, params, handler);
@@ -107,6 +126,13 @@ public class TwitterClient extends OAuthBaseClient {
         client.post(apiUrl, params, handler);
     }
 
+    public void getUsingUser(AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("account/verify_credentials.json");
+        RequestParams params = new RequestParams();
+        params.put("include_entities", true);
+        client.get(apiUrl, params, handler);
+    }
+
     public void user(long uid, String screenName, AsyncHttpResponseHandler handler) {
         // returns the info about a users profile
         String apiUrl = getApiUrl("users/show.json");
@@ -117,7 +143,6 @@ public class TwitterClient extends OAuthBaseClient {
         client.get(apiUrl, params, handler);
     }
 
-    // METHODS FOR LATER TODO - Fix userFollowers and userFollowings
     public void getUserTimeline(String screenName, long count, AsyncHttpResponseHandler handler) {
         // returns the statuses of the user specified by the uid, set count to 20 and maxId to LONG.MAXVALUE for now
         String apiUrl = getApiUrl("statuses/user_timeline.json");
@@ -139,6 +164,24 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("include_rts", true);
         params.put("exclude_replies", false);
         client.get(apiUrl, params, handler);
+    }
+
+    public void userLookup(String screenNames, AsyncHttpResponseHandler handler) {
+        // returns whether the current user follows the users in the list of longs
+        // screenNames is a concatenation of user screen names separated by just commas
+        String apiUrl = getApiUrl("friendships/lookup.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenNames);
+        client.get(apiUrl, params, handler);
+    }
+
+    public void followToggle(String screenName, boolean following, AsyncHttpResponseHandler handler){
+        String apiUrl;
+        if (!following) apiUrl = getApiUrl("friendships/create.json");
+        else apiUrl = getApiUrl("friendships/destroy.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenName);
+        client.post(apiUrl, params, handler);
     }
 
     public void userFollowers(){
