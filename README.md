@@ -4,7 +4,7 @@
 This app was made for learning purposes.
 
 
-Time spent: **30** hours spent in total
+Time spent: **35** hours spent in total (for two weeks)
 
 Elements used:
 - Icons from Material.io/icons/
@@ -19,9 +19,22 @@ The following **required** functionality is completed:
   * [x] User is displayed the [relative timestamp](https://gist.github.com/nesquena/f786232f5ef72f6e10a7) for each tweet "8m", "7h"
 * [x] User can **compose and post a new tweet**
   * [x] User can click a “Compose” icon in the Action Bar on the top right
+    * [x] I actually used a floating action button isntead
   * [x] User can then enter a new tweet and post this to twitter
   * [x] User is taken back to home timeline with **new tweet visible** in timeline
   * [x] Newly created tweet should be manually inserted into the timeline and not rely on a full refresh
+* [x] User can switch between Timeline and Mention views using tabs.
+  * [x] User can view their home timeline tweets.
+  * [x] User can view the recent mentions of their username.
+  * [x] User can compose tweets. See this conceptual guide for passing data into a timeline fragment.
+* [x] User can navigate to view their own profile. 
+  * [x] I actually placed the user click on the left of the screen.
+  * [x] User can see picture, tagline, # of followers, # of following, and tweets on their profile.
+  * [x] The users/verify_credentials endpoint can be used to access this information.
+* [x] User can click on the profile image in any tweet to see another user's profile.
+  * [x] User can see picture, tagline, # of followers, # of following, and tweets of clicked user.
+  * [x] Profile view should include that user's timeline.
+  * [x] The users/show endpoint can be used to access this information.  
 
 The following **optional** features are implemented:
 
@@ -29,13 +42,15 @@ The following **optional** features are implemented:
 * [x] User can **pull down to refresh tweets timeline**
 * [x] User is using **"Twitter branded" colors and styles**
   * [x] Used the quite recent twitter theme *Night Mode*, which is why my app is dark blue.
-* [x] User sees an **indeterminate progress indicator** when any background or network task is happening
+  * [x] I also used a different set of icons that were nicer in my opinion.
+* [ ] User sees an **indeterminate progress indicator** when any background or network task is happening
 * [x] User can **select "reply" from detail view to respond to a tweet**
   * [x] User that wrote the original tweet is **automatically "@" replied in compose**
 * [x] User can tap a tweet to **open a detailed tweet view**
   * [x] User can **take favorite (and unfavorite) or reweet** actions on a tweet
     * [x] User can retweet/unretweet in detailed tweet mode.
 * [x] User can **see embedded image media within a tweet** on list or detail view.
+* [x] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 
 The following **bonus** features are implemented:
 
@@ -43,7 +58,6 @@ The following **bonus** features are implemented:
 * [ ] Compose tweet functionality is build using modal overlay
 * [x] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.com/android/Using-Parceler).
 * [x] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.com/android/Drawables#vector-drawables) where appropriate.
-* [x] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [ ] User can view following / followers list through any profile they view.
 * [x] User can see embedded image media within the tweet detail view
 * [ ] Use the popular ButterKnife annotation library to reduce view boilerplate.
@@ -61,15 +75,18 @@ The following **additional** features are implemented:
   * [x] On reply, set handler to tweet id (in reply to, check twitter API) so that replies work in actual replies
   * [x] For images of tweets, have a different placeholder than the one of profile photos (similar to Flixster app placeholder)
   * [ ] Make infinite pagination on user profile's tweets
-  * [ ] Make the follow button actually work
-  * [ ] Add tabs to user profile
-  * [ ] User can see a user's profile by clicking on the profile picture of the user.
-  * [ ] Fix bugs resulting from infinite scroll and repeating the same tweets over and over when web error occurs
-  * [ ] Add a backpress button when user enters reply to a tweet (instead of letting be for the regular android backPress)
+  * [x] Make the follow button actually work
+  * [x] Add tabs to user profile
+  * [x] User can see a user's profile by clicking on the profile picture of the user.
+  * [ ] (!!!) Fix bugs resulting from infinite scroll and repeating the same tweets over and over when web error occurs
+    * [ ] Figure out why maxid does not update
+  * [x] Add a backpress button when user enters reply to a tweet (instead of letting be for the regular android backPress)
   * [ ] When click on backPress in the timeline, it just restart the application instead of quitting it. Fixing this bug would be a goal
-  * [ ] Make the follow button work on user profiles
+  * [x] Make the follow button work on user profiles
   * [ ] On the profile view, display an action bar as the user scrolls down (with a back button)
   * [ ] Add search tab with various search functions implemented (mentions, tags, users, etc)
+  * [ ] Fix the indeterminate progress bar
+  * [ ] Add an icon for clicking on the profile (if possible, user an image instead of icon)
 
 ## Video Walkthrough
 
